@@ -1,6 +1,5 @@
 import Head from "next/head";
-import NavigationBar from "../components/NavigationBar";
-import Footer from "../components/Footer";
+import Layout from "../components/Layout";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
@@ -8,16 +7,10 @@ export default function Home() {
     <div className={styles.container}>
       <Head>
         <title>Todd Thomas Painting</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/ttp-logo.png" />
       </Head>
-
+      <Layout>
       <main className={styles.main}>
-        <NavigationBar />
-
-        <p className={styles.description}>
-          Select An Option Below To Get Started
-        </p>
-
         <div className={styles.grid}>
           <a href="/exterior-estimate" className={styles.card}>
             <h3>Exterior Estimate &rarr;</h3>
@@ -38,9 +31,9 @@ export default function Home() {
             <h3>Cash Entry &rarr;</h3>
             <p>Cash Entry</p>
           </a>
-          <Footer />
         </div>
       </main>
+      </Layout>
     </div>
   );
 }

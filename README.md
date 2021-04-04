@@ -7,3 +7,5 @@ Applify Doc https://docs.amplify.aws/guides/hosting/nextjs/q/platform/js#kicking
 Next JS Doc https://nextjs.org/learn/basics/create-nextjs-app
 
 Setup DNS doc https://docs.aws.amazon.com/amplify/latest/userguide/to-add-a-custom-domain-managed-by-godaddy.html
+
+PDF Fill Package https://www.npmjs.com/package/pdf-fill-form

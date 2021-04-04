@@ -1,11 +1,10 @@
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
-import Image from "next/image";
 export default function NavigationBar() {
   return (
     <div className={styles.header}>
       <Link href="/">
-        <Image src="https://todd-thomas-painting.s3-us-west-2.amazonaws.com/ttp-logo.png" alt="Logo" width={80} height={80} href="/" />
+        <img src="https://todd-thomas-painting.s3-us-west-2.amazonaws.com/ttp-logo.png" alt="Logo" width={80} height={80} href="/" />
       </Link>
       <Link href="/exterior-estimate">
         <a>Exeterior Estimate</a>

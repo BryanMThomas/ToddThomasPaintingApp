@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Form, Button, Col, Row } from "react-bootstrap";
+import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import styled from "styled-components";
 
@@ -45,13 +45,26 @@ export const ExteriorEstimate = () => {
     //Set Sqft
     setExteriorState((prevState) => ({
       ...prevState,
-      ["homeSqft"]: value,
-      ["deluxePackagePrice"]: Math.round(value * deluxeRate),
-      ["ultimatePackagePrice"]: Math.round(value * ultimateRate),
-      ["maximumPackagePrice"]: Math.round(value * maximumRate),
+      homeSqft: value,
+      deluxePackagePrice:
+        "$" +
+        Math.round(value * deluxeRate)
+          .toString()
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+      ultimatePackagePrice:
+        "$" +
+        Math.round(value * ultimateRate)
+          .toString()
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+      maximumPackagePrice:
+        "$" +
+        Math.round(value * maximumRate)
+          .toString()
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ","),
     }));
   };
   const handleStateChange = (e) => {
+    console.log("Hello: " + e.target.name + " " + e.target.value);
     if (e.target.name === "homeSqft") {
       handleSqftChange(e);
     } else {
@@ -129,24 +142,45 @@ export const ExteriorEstimate = () => {
               <Form.Label>Home Sqft: </Form.Label>
             </Col>
             <Col xs="3">
-              <Form.Control type="number" placeholder="Enter SQFT" required />
+              <Form.Control
+                name="homeSqft"
+                type="number"
+                placeholder="Enter SQFT"
+                required
+                onChange={handleStateChange}
+              />
             </Col>
           </Form.Row>
           <br />
           <Form.Row>
             <Form.Group as={Col}>
               <Form.Label>Deluxe Package</Form.Label>
-              <Form.Control />
+              <Form.Control
+                name="deluxePackagePrice"
+                type="text"
+                value={exteriorState.deluxePackagePrice}
+                onChange={handleStateChange}
+              />
             </Form.Group>
 
             <Form.Group as={Col}>
               <Form.Label>Ultimate Package</Form.Label>
-              <Form.Control />
+              <Form.Control
+                name="ultimatePackagePrice"
+                type="text"
+                value={exteriorState.ultimatePackagePrice}
+                onChange={handleStateChange}
+              />
             </Form.Group>
 
             <Form.Group as={Col}>
               <Form.Label>Maximum Package</Form.Label>
-              <Form.Control />
+              <Form.Control
+                name="maximumPackagePrice"
+                type="text"
+                value={exteriorState.maximumPackagePrice}
+                onChange={handleStateChange}
+              />
             </Form.Group>
           </Form.Row>
           <Form.Row>

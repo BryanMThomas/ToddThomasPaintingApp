@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styles from "../styles/Home.module.css";
 import Layout from "../components/Layout";
 import ClientInfo from "../components/ClientInfo";
+import LineItems from "../components/LineItems";
 export default function ExteriorEstimate() {
   //PRICING CONSTS
   const deluxeRate = 1.15;
@@ -17,6 +18,7 @@ export default function ExteriorEstimate() {
     deluxePackagePrice: 0,
     ultimatePackagePrice: 0,
     maximumPackagePrice: 0,
+    lineItems: [{}],
   });
   const handleSqftChange = (e) => {
     let value = e.target.value;
@@ -40,6 +42,18 @@ export default function ExteriorEstimate() {
       }));
     }
   };
+  const handleLineItemChange = (e) => {
+    const { name, value } = e.target;
+    setExteriorState((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleRemove = (i) => {
+    // const productLines = invoice.productLines.filter((productLine, index) => index !== i)
+    // setInvoice({ ...invoice, productLines })
+  };
 
   const submit = () => {};
   return (
@@ -48,7 +62,7 @@ export default function ExteriorEstimate() {
         <h1>Exterior Estimate</h1>
         <p>Enter Quote Details Here</p>
         <br />
-        <form onSubmit={submit} className = {styles.formInput}>
+        <form onSubmit={submit} className={styles.formInput}>
           <ClientInfo handleStateChange={handleStateChange} />
           <br />
           <p>
@@ -92,6 +106,7 @@ export default function ExteriorEstimate() {
               onChange={handleStateChange}
             />
           </p>
+          <LineItems handleRemove={handleRemove} state={exteriorState} />
           <br />
           <button type="submit">Download PDF</button>
         </form>

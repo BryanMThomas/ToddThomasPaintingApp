@@ -76,7 +76,9 @@ export const ExteriorEstimate = () => {
     }
   };
 
-  const submit = () => {};
+  const handleSubmit = () => {
+    console.log(JSON.stringify(exteriorState))
+  };
 
   return (
     <Layout>
@@ -190,7 +192,7 @@ export const ExteriorEstimate = () => {
             </Col>
           </Form.Row>
           <br />
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" onClick={handleSubmit}>
             Download &darr;
           </Button>
         </Form>

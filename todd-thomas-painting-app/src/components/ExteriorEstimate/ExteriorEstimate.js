@@ -77,7 +77,7 @@ export const ExteriorEstimate = () => {
   };
 
   const handleSubmit = () => {
-    console.log(JSON.stringify(exteriorState))
+    console.log(JSON.stringify(exteriorState));
   };
 
   return (
@@ -92,9 +92,11 @@ export const ExteriorEstimate = () => {
             </Col>
             <Col>
               <Form.Control
+                name="clientName"
                 type="text"
                 placeholder="Enter Client Name"
                 required
+                onChange={handleStateChange}
               />
             </Col>
           </Form.Row>
@@ -105,9 +107,11 @@ export const ExteriorEstimate = () => {
             </Col>
             <Col>
               <Form.Control
+                name="clientAddress"
                 type="text"
                 placeholder="Enter Client Address"
                 required
+                onChange={handleStateChange}
               />
             </Col>
           </Form.Row>
@@ -118,9 +122,10 @@ export const ExteriorEstimate = () => {
             </Col>
             <Col>
               <Form.Control
+                name="clientEmail"
                 type="email"
                 placeholder="Enter Client Email"
-                required
+                onChange={handleStateChange}
               />
             </Col>
           </Form.Row>
@@ -131,9 +136,10 @@ export const ExteriorEstimate = () => {
             </Col>
             <Col>
               <Form.Control
+                name="clientPhone"
                 type="text"
                 placeholder="Enter Client Phone"
-                required
+                onChange={handleStateChange}
               />
             </Col>
           </Form.Row>

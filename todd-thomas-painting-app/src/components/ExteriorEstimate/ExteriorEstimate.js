@@ -78,6 +78,21 @@ export const ExteriorEstimate = () => {
 
   const handleSubmit = () => {
     console.log(JSON.stringify(exteriorState));
+    const reader = new FileReader()
+    reader.readAsText("../../assets/ExteriorTemplate.pdf");
+    console.log()
+    // var sourcePDF = "../../assets/ExteriorTemplate.pdf";
+    // var destinationPDF = "/test_complete.pdf";
+    // var data = {
+    //   clientNamePdf: exteriorState.clientName,
+    //   clientAddressPdf: exteriorState.clientAddress,
+    //   clientEmailPdf: exteriorState.clientEmail,
+    //   clientPhonePdf: exteriorState.clientPhone,
+    //   deluxePackagePricePdf: exteriorState.deluxePackagePrice,
+    //   ultimatePackagePricePdf: exteriorState.ultimatePackagePrice,
+    //   maximumPackagePricePdf: exteriorState.maximumPackagePrice,
+    //   notes: "Note Here",
+    // };
   };
 
   return (

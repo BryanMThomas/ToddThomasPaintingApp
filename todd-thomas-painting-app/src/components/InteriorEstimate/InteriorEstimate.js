@@ -25,7 +25,7 @@ const Styles = styled.div`
 export const InteriorEstimate = () => {
  return (
     <Styles>
-      <div> Interior Estimate</div>
+      <div> Interior Estimate - TODO</div>
     </Styles>
   );
 };

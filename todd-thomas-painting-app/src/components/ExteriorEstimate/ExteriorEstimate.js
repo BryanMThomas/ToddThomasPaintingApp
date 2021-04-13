@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import styled from "styled-components";
+import { postExteriorEsimtate } from "../../utilities/api";
+import { getDate } from "../../utilities/util";
 
 const Styles = styled.div`
   margin-top: 2%;
@@ -39,6 +41,8 @@ export const ExteriorEstimate = () => {
     deluxePackagePrice: 0,
     ultimatePackagePrice: 0,
     maximumPackagePrice: 0,
+    note: "",
+    responseData: {},
   });
   const handleSqftChange = (e) => {
     let value = e.target.value;
@@ -76,29 +80,76 @@ export const ExteriorEstimate = () => {
     }
   };
 
+  function createEstimate() {
+    let date = getDate();
+    let outputFileName = exteriorState.clientName.replace(" ", "") + "-" + date;
+    let fields = {
+      clientNamePdf: exteriorState.clientName,
+      clientAddressPdf: exteriorState.clientAddress,
+      clientEmailPdf: exteriorState.clientEmail,
+      clientPhonePdf: exteriorState.clientPhone,
+      deluxePackagePricePdf: exteriorState.deluxePackagePrice,
+      ultimatePackagePricePdf: exteriorState.ultimatePackagePrice,
+      maximumPackagePricePdf: exteriorState.maximumPackagePrice,
+      notes: exteriorState.note,
+    };
+    postExteriorEsimtate(outputFileName, fields).then((response) => {
+      if (response.status !== 200) {
+        //verify succesful call
+        setExteriorState((prevState) => ({
+          ...prevState,
+          responseData: { error: true },
+        }));
+      } else {
+        setExteriorState((prevState) => ({
+          ...prevState,
+          responseData: { response: response.status },
+        }));
+        let link =
+          "https://todd-thomas-painting.s3-us-west-2.amazonaws.com/ExteriorEstimates/" +
+          outputFileName +
+          ".pdf";
+        window.open(link);
+      }
+    });
+  }
+
   const handleSubmit = () => {
     console.log(JSON.stringify(exteriorState));
-    const reader = new FileReader()
-    reader.readAsText("../../assets/ExteriorTemplate.pdf");
-    console.log()
-    // var sourcePDF = "../../assets/ExteriorTemplate.pdf";
-    // var destinationPDF = "/test_complete.pdf";
-    // var data = {
-    //   clientNamePdf: exteriorState.clientName,
-    //   clientAddressPdf: exteriorState.clientAddress,
-    //   clientEmailPdf: exteriorState.clientEmail,
-    //   clientPhonePdf: exteriorState.clientPhone,
-    //   deluxePackagePricePdf: exteriorState.deluxePackagePrice,
-    //   ultimatePackagePricePdf: exteriorState.ultimatePackagePrice,
-    //   maximumPackagePricePdf: exteriorState.maximumPackagePrice,
-    //   notes: "Note Here",
-    // };
+    createEstimate();
+    // .then((response) => {
+    //         if (response.data.statusCode !== 200) {
+    //           //verify succesful call
+    //           setExteriorState((prevState) => ({
+    //             ...prevState,
+    //             responseData: { error: true },
+    //           }));
+    //         } else {
+    //           setExteriorState((prevState) => ({
+    //             ...prevState,
+    //             responseData: {response: response.data.body},
+    //           }));
+    //           let link = "https://todd-thomas-painting.s3-us-west-2.amazonaws.com/ExteriorEstimates/"+ outputFileName +".pdf"
+    //           window.open(link);
+    //         }
+    //       })
+    //       .catch((error) => {
+    //         console.log(error);
+    //       });
   };
 
   return (
     <Layout>
       <Styles>
         <h1>Exterior Estimate</h1>
+        {exteriorState.responseData.hasOwnProperty("error") ? (
+          <div>
+            <h1>Error Creating Estimate</h1>
+            <p>Please screenshot page to save estimate info</p>
+          </div>
+        ) : (
+          ""
+        )}
         <br />
         <Form>
           <Form.Row>
@@ -112,6 +163,7 @@ export const ExteriorEstimate = () => {
                 placeholder="Enter Client Name"
                 required
                 onChange={handleStateChange}
+                value={exteriorState.clientName}
               />
             </Col>
           </Form.Row>
@@ -213,7 +265,7 @@ export const ExteriorEstimate = () => {
             </Col>
           </Form.Row>
           <br />
-          <Button variant="primary" type="submit" onClick={handleSubmit}>
+          <Button variant="primary" onClick={handleSubmit}>
             Download &darr;
           </Button>
         </Form>

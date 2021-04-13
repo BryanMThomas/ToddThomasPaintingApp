@@ -68,7 +68,6 @@ export const ExteriorEstimate = () => {
     }));
   };
   const handleStateChange = (e) => {
-    console.log("Hello: " + e.target.name + " " + e.target.value);
     if (e.target.name === "homeSqft") {
       handleSqftChange(e);
     } else {
@@ -117,25 +116,6 @@ export const ExteriorEstimate = () => {
   const handleSubmit = () => {
     console.log(JSON.stringify(exteriorState));
     createEstimate();
-    // .then((response) => {
-    //         if (response.data.statusCode !== 200) {
-    //           //verify succesful call
-    //           setExteriorState((prevState) => ({
-    //             ...prevState,
-    //             responseData: { error: true },
-    //           }));
-    //         } else {
-    //           setExteriorState((prevState) => ({
-    //             ...prevState,
-    //             responseData: {response: response.data.body},
-    //           }));
-    //           let link = "https://todd-thomas-painting.s3-us-west-2.amazonaws.com/ExteriorEstimates/"+ outputFileName +".pdf"
-    //           window.open(link);
-    //         }
-    //       })
-    //       .catch((error) => {
-    //         console.log(error);
-    //       });
   };
 
   return (
@@ -161,7 +141,6 @@ export const ExteriorEstimate = () => {
                 name="clientName"
                 type="text"
                 placeholder="Enter Client Name"
-                required
                 onChange={handleStateChange}
                 value={exteriorState.clientName}
               />
@@ -177,7 +156,6 @@ export const ExteriorEstimate = () => {
                 name="clientAddress"
                 type="text"
                 placeholder="Enter Client Address"
-                required
                 onChange={handleStateChange}
               />
             </Col>
@@ -261,7 +239,13 @@ export const ExteriorEstimate = () => {
           <Form.Row>
             <Col xs="8">
               <Form.Label>Additional Notes</Form.Label>
-              <Form.Control as="textarea" rows={3} />
+              <Form.Control
+                name="note"
+                value={exteriorState.note}
+                as="textarea"
+                rows={3}
+                onChange={handleStateChange}
+              />
             </Col>
           </Form.Row>
           <br />

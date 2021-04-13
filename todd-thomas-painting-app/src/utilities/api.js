@@ -1,7 +1,16 @@
-import axios from 'axios'
+import axios from "axios";
 
-const getAllPropertyData = () => {
-    return axios.get('https://g6rosry6sj.execute-api.us-west-2.amazonaws.com/prod/properties')
-}
-
-export default getAllPropertyData
+export const postExteriorEsimtate = (fileName, fieldsObj) => {
+  try{
+  return axios.post(
+    "https://kprt1ppwzc.execute-api.us-west-2.amazonaws.com/prod",
+    {
+      outputFileName: fileName,
+      fields: fieldsObj,
+    },
+    { timeout: 10000, headers: { "Content-Type": "application/json" } }
+  );
+  }catch(e){
+    console.log("Exception: " + e)
+  }
+};

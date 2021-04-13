@@ -74,7 +74,7 @@
     "GetExteriorEstimateLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/getExteriorEstimateLambda-dev-getExteriorEstimate"
+        "LogGroupName": "/aws/lambda/getExteriorEstimate-dev-getExteriorEstimate"
       }
     },
     "IamRoleLambdaExecution": {
@@ -102,7 +102,7 @@
               "Fn::Join": [
                 "-",
                 [
-                  "getExteriorEstimateLambda",
+                  "getExteriorEstimate",
                   "dev",
                   "lambda"
                 ]
@@ -119,7 +119,7 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/getExteriorEstimateLambda-dev*:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/getExteriorEstimate-dev*:*"
                     }
                   ]
                 },
@@ -130,7 +130,7 @@
                   ],
                   "Resource": [
                     {
-                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/getExteriorEstimateLambda-dev*:*:*"
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/getExteriorEstimate-dev*:*:*"
                     }
                   ]
                 },
@@ -152,7 +152,7 @@
           "Fn::Join": [
             "-",
             [
-              "getExteriorEstimateLambda",
+              "getExteriorEstimate",
               "dev",
               {
                 "Ref": "AWS::Region"
@@ -170,11 +170,11 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/getExteriorEstimateLambda/dev/1618186578149-2021-04-12T00:16:18.149Z/getExteriorEstimateLambda.zip"
+          "S3Key": "serverless/getExteriorEstimate/dev/1618278688635-2021-04-13T01:51:28.635Z/getExteriorEstimate.zip"
         },
         "Handler": "handler.getExteriorEstimate",
         "Runtime": "nodejs12.x",
-        "FunctionName": "getExteriorEstimateLambda-dev-getExteriorEstimate",
+        "FunctionName": "getExteriorEstimate-dev-getExteriorEstimate",
         "MemorySize": 1024,
         "Timeout": 6,
         "Role": {
@@ -188,20 +188,20 @@
         "GetExteriorEstimateLogGroup"
       ]
     },
-    "GetExteriorEstimateLambdaVersionrY7w1qUXUtJJqIZl4L1esWSCBYc8Fya5vcvSuYeMKo": {
+    "GetExteriorEstimateLambdaVersionecC0Q2v4stXPXHuuXIrhN6STyg4VKWOHUVSzV1ZRk": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetExteriorEstimateLambdaFunction"
         },
-        "CodeSha256": "5LyZXHw1iVWzINGJMmYC7YWIu3jc9Q62A+ucvKaoH+c="
+        "CodeSha256": "gj/F29GaDCr2WTyz36O77RS2oUy6SNZ6G+Vwgt9EDBg="
       }
     },
     "ApiGatewayRestApi": {
       "Type": "AWS::ApiGateway::RestApi",
       "Properties": {
-        "Name": "dev-getExteriorEstimateLambda",
+        "Name": "dev-getExteriorEstimate",
         "EndpointConfiguration": {
           "Types": [
             "EDGE"
@@ -220,6 +220,51 @@
           ]
         },
         "PathPart": "exterior-estimate",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodExteriorDashestimateOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+              },
+              "ResponseTemplates": {
+                "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".+\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceExteriorDashestimate"
+        },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         }
@@ -268,7 +313,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1618186574555": {
+    "ApiGatewayDeployment1618278684670": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -277,6 +322,7 @@
         "StageName": "dev"
       },
       "DependsOn": [
+        "ApiGatewayMethodExteriorDashestimateOptions",
         "ApiGatewayMethodExteriorDashestimatePost"
       ]
     },
@@ -327,7 +373,7 @@
     "GetExteriorEstimateLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetExteriorEstimateLambdaVersionrY7w1qUXUtJJqIZl4L1esWSCBYc8Fya5vcvSuYeMKo"
+        "Ref": "GetExteriorEstimateLambdaVersionecC0Q2v4stXPXHuuXIrhN6STyg4VKWOHUVSzV1ZRk"
       }
     },
     "ServiceEndpoint": {

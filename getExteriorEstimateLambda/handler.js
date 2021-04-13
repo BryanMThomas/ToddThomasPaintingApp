@@ -2,12 +2,15 @@ const PDF = require("pdffiller-aws-lambda");
 const AWS = require("aws-sdk");
 const S3 = new AWS.S3();
 const fs = require("fs");
+const { Http2ServerResponse } = require("http2");
 
 const TEMP_INPUT = "/tmp/template.pdf";
 const TEMP_OUTPUT = "/tmp/formatted.pdf";
 
 module.exports.getExteriorEstimate = (event, context, callback) => {
-  const { outputFileName, fields } = event;
+  console.log("EVENT: " + JSON.stringify(event));
+  const outputFileName = event.outputFileName;
+  const fields = event.fields;
 
   console.log(
     "fileName: " + outputFileName + "\nfields: " + JSON.stringify(fields)
@@ -17,16 +20,16 @@ module.exports.getExteriorEstimate = (event, context, callback) => {
   const outputFilePath = "ExteriorEstimates/" + outputFileName + ".pdf";
 
   try {
-    S3.getObject({ Bucket: bucket, Key: estimateTemplate }, (err, getResp) => {
+    return S3.getObject({ Bucket: bucket, Key: estimateTemplate }, (err, getResp) => {
       if (err) throw err;
 
       console.log("file read successfully");
 
-      fs.writeFile(TEMP_INPUT, getResp.Body, (writeErr) => {
+      return fs.writeFile(TEMP_INPUT, getResp.Body, (writeErr) => {
         if (writeErr) throw writeErr;
         console.log("file saved successfully");
 
-        PDF.fillFormWithOptions(
+        return PDF.fillFormWithOptions(
           TEMP_INPUT,
           TEMP_OUTPUT,
           fields,
@@ -36,7 +39,7 @@ module.exports.getExteriorEstimate = (event, context, callback) => {
             if (fillErr) throw fillErr;
             console.log("pdf successfully filled");
 
-            fs.readFile(TEMP_OUTPUT, (readErr, readResp) => {
+            return fs.readFile(TEMP_OUTPUT, (readErr, readResp) => {
               if (readErr) throw readErr;
 
               const saveParams = {
@@ -46,10 +49,20 @@ module.exports.getExteriorEstimate = (event, context, callback) => {
                 ContentType: "application/pdf",
               };
 
-              S3.putObject(saveParams, (saveErr, data) => {
+              return S3.putObject(saveParams, (saveErr, data) => {
                 if (saveErr) throw saveErr;
                 console.log("pdf successfully saved");
-                callback(null, true);
+                let url = "https://todd-thomas-painting.s3-us-west-2.amazonaws.com/"+outputFilePath;
+                const response ={
+                  statusCode: 200,
+                  body: {success:true, url: url},
+                  headers: {
+                    "Access-Control-Allow-Origin": "*",
+                    "Content-Type": "application/json",
+                  }}
+                  console.log("RESPONSE: " + JSON.stringify(response))
+                  return response;
+                callback(null, response);
               });
             });
           }
@@ -59,6 +72,7 @@ module.exports.getExteriorEstimate = (event, context, callback) => {
   } catch (e) {
     console.log("An error occurred");
     console.log(e);
-    callback(e, true);
+    return { statusCode: 500, body: false }
+    callback(e, { statusCode: 500, body: true });
   }
 };

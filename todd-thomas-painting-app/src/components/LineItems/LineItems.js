@@ -3,9 +3,17 @@ import { Form, Button, Col } from "react-bootstrap";
 export const LineItems = (props) => {
   //METHODS
   const handleInputChange = (e, index) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
     const list = [...props.lineItems];
-    list[index][name] = value;
+    if (name === "cost") {
+      value = value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      if (!value.includes("$")) {
+        value = "$" + value;
+      }
+      list[index][name] = value;
+    } else {
+      list[index][name] = value;
+    }
     props.setLineItems(list);
   };
 
@@ -44,7 +52,7 @@ export const LineItems = (props) => {
               <Col xs="3">
                 <Form.Control
                   name="cost"
-                  type="number"
+                  type="text"
                   placeholder="Enter Cost"
                   onChange={(e) => handleInputChange(e, i)}
                   value={x.cost}

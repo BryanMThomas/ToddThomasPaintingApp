@@ -43,6 +43,7 @@ export const ExteriorEstimate = () => {
     ultimatePackagePrice: 0,
     maximumPackagePrice: 0,
     note: "",
+    noteTemp: "",
     responseData: {},
   });
   const [lineItems, setLineItems] = useState([{ description: "", cost: "" }]);
@@ -115,8 +116,26 @@ export const ExteriorEstimate = () => {
       }
     });
   }
+  const setNotesField = () => {
+    let note = "";
+    if (lineItems[0].description !== "") {
+      note = "Additional Items Prices Seperately:\n";
+      lineItems.forEach((lineItem) => {
+        note = note + "\n"+lineItem.description + "\t\t "+ lineItem.cost;
+      });
+      note = note + "\n\n";
+    }
+    if(exteriorState.noteTemp !== ""){
+      note = note + "Additional Notes:\n" + exteriorState.noteTemp;
+    }
+    setExteriorState((prevState) => ({
+      ...prevState,
+      note: note,
+    }));
+  };
 
   const handleSubmit = () => {
+    setNotesField();
     createEstimate();
   };
 
@@ -246,8 +265,8 @@ export const ExteriorEstimate = () => {
             <Col xs="8">
               <Form.Label>Additional Notes</Form.Label>
               <Form.Control
-                name="note"
-                value={exteriorState.note}
+                name="noteTemp"
+                value={exteriorState.noteTemp}
                 as="textarea"
                 rows={3}
                 onChange={handleStateChange}

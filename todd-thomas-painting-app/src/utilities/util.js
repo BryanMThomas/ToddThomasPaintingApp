@@ -5,5 +5,5 @@ export const getDate = () => {
   var yyyy = today.getFullYear();
   var ss = today.getSeconds();
 
-  return mm + "-" + dd + "-" + yyyy + ":" + ss;
+  return mm + "-" + dd + "-" + yyyy + "_" + ss;
 };

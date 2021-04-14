@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
+import { LineItems } from "../LineItems/LineItems";
 import styled from "styled-components";
 import { postExteriorEsimtate } from "../../utilities/api";
 import { getDate } from "../../utilities/util";
@@ -31,7 +32,7 @@ export const ExteriorEstimate = () => {
   const deluxeRate = 1.15;
   const ultimateRate = 1.22;
   const maximumRate = 1.35;
-
+  //STATE VARIABLES
   const [exteriorState, setExteriorState] = useState({
     clientName: "",
     clientAddress: "",
@@ -42,8 +43,11 @@ export const ExteriorEstimate = () => {
     ultimatePackagePrice: 0,
     maximumPackagePrice: 0,
     note: "",
+    noteTemp: "",
     responseData: {},
   });
+  const [lineItems, setLineItems] = useState([{ description: "", cost: "" }]);
+  //METHODS
   const handleSqftChange = (e) => {
     let value = e.target.value;
     //Set Sqft
@@ -112,11 +116,30 @@ export const ExteriorEstimate = () => {
       }
     });
   }
+  const setNotesField = () => {
+    let note = "";
+    if (lineItems[0].description !== "") {
+      note = "Additional Items Prices Seperately:\n";
+      lineItems.forEach((lineItem) => {
+        note = note + "\n"+lineItem.description + "\t\t "+ lineItem.cost;
+      });
+      note = note + "\n\n";
+    }
+    if(exteriorState.noteTemp !== ""){
+      note = note + "Additional Notes:\n" + exteriorState.noteTemp;
+    }
+    setExteriorState((prevState) => ({
+      ...prevState,
+      note: note,
+    }));
+  };
 
   const handleSubmit = () => {
-    console.log(JSON.stringify(exteriorState));
+    setNotesField();
     createEstimate();
   };
+
+  //DOM STRUCTURE
 
   return (
     <Layout>
@@ -236,12 +259,14 @@ export const ExteriorEstimate = () => {
               />
             </Form.Group>
           </Form.Row>
+          <LineItems lineItems={lineItems} setLineItems={setLineItems} />
+          <br />
           <Form.Row>
             <Col xs="8">
               <Form.Label>Additional Notes</Form.Label>
               <Form.Control
-                name="note"
-                value={exteriorState.note}
+                name="noteTemp"
+                value={exteriorState.noteTemp}
                 as="textarea"
                 rows={3}
                 onChange={handleStateChange}

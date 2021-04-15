@@ -116,26 +116,37 @@ export const ExteriorEstimate = () => {
       }
     });
   }
-  const setNotesField = () => {
+  const handleNoteChange = (e) => {
+    const { name, value } = e.target;
+
     let note = "";
     if (lineItems[0].description !== "") {
       note = "Additional Items Prices Seperately:\n";
       lineItems.forEach((lineItem) => {
-        note = note + "\n"+lineItem.description + "\t\t "+ lineItem.cost;
+        note = note + "\n" + lineItem.description + "\t\t " + lineItem.cost;
       });
       note = note + "\n\n";
     }
-    if(exteriorState.noteTemp !== ""){
-      note = note + "Additional Notes:\n" + exteriorState.noteTemp;
+    if (exteriorState.noteTemp !== "" && name === "noteTemp") {
+      note = note + "Notes:\n" + value;
     }
-    setExteriorState((prevState) => ({
-      ...prevState,
-      note: note,
-    }));
+    if(name === "noteTemp"){
+      setExteriorState((prevState) => ({
+        ...prevState,
+        note: note,
+        noteTemp: value,
+      }));
+    }else{
+      setExteriorState((prevState) => ({
+        ...prevState,
+        note: note,
+      }));
+    }
+
+    console.log("NOTE CHANGE: " + JSON.stringify(exteriorState));
   };
 
   const handleSubmit = () => {
-    setNotesField();
     createEstimate();
   };
 
@@ -259,7 +270,11 @@ export const ExteriorEstimate = () => {
               />
             </Form.Group>
           </Form.Row>
-          <LineItems lineItems={lineItems} setLineItems={setLineItems} />
+          <LineItems
+            lineItems={lineItems}
+            setLineItems={setLineItems}
+            handleNoteChange={handleNoteChange}
+          />
           <br />
           <Form.Row>
             <Col xs="8">
@@ -269,7 +284,7 @@ export const ExteriorEstimate = () => {
                 value={exteriorState.noteTemp}
                 as="textarea"
                 rows={3}
-                onChange={handleStateChange}
+                onChange={handleNoteChange}
               />
             </Col>
           </Form.Row>

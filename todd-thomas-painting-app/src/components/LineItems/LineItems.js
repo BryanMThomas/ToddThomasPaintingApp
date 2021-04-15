@@ -15,6 +15,7 @@ export const LineItems = (props) => {
       list[index][name] = value;
     }
     props.setLineItems(list);
+    props.handleNoteChange(e);
   };
 
   // handle click event of the Remove button

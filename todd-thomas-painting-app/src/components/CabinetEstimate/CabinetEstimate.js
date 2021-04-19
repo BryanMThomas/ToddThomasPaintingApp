@@ -127,7 +127,7 @@ export const CabinetEstimate = () => {
     };
     console.log("REQUEST BODY:" + JSON.stringify(fields));
 
-    postEsimtate("CabinetTemplateForm2.pdf","CabinetEstimates",outputFileName, fields).then((response) => {
+    postEsimtate("CabinetTemplateForm.pdf","CabinetEstimates",outputFileName, fields).then((response) => {
       if (response.status !== 200) {
         //verify succesful call
         setCabinetState((prevState) => ({

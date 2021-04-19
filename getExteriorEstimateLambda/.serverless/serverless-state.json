@@ -190,7 +190,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/getExteriorEstimate/dev/1618278688635-2021-04-13T01:51:28.635Z/getExteriorEstimate.zip"
+                "S3Key": "serverless/getExteriorEstimate/dev/1618812840514-2021-04-19T06:14:00.514Z/getExteriorEstimate.zip"
               },
               "Handler": "handler.getExteriorEstimate",
               "Runtime": "nodejs12.x",
@@ -208,14 +208,14 @@
               "GetExteriorEstimateLogGroup"
             ]
           },
-          "GetExteriorEstimateLambdaVersionecC0Q2v4stXPXHuuXIrhN6STyg4VKWOHUVSzV1ZRk": {
+          "GetExteriorEstimateLambdaVersionECg3RS70vkohSqijPDrKolI7MjBXHYJldHq99ojVq9A": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetExteriorEstimateLambdaFunction"
               },
-              "CodeSha256": "gj/F29GaDCr2WTyz36O77RS2oUy6SNZ6G+Vwgt9EDBg="
+              "CodeSha256": "fRT90MdcnZOHctI+3GjOrOPTCtGScSBq0/IbZ0l1iGg="
             }
           },
           "ApiGatewayRestApi": {
@@ -333,7 +333,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1618278684670": {
+          "ApiGatewayDeployment1618812836830": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -393,7 +393,7 @@
           "GetExteriorEstimateLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetExteriorEstimateLambdaVersionecC0Q2v4stXPXHuuXIrhN6STyg4VKWOHUVSzV1ZRk"
+              "Ref": "GetExteriorEstimateLambdaVersionECg3RS70vkohSqijPDrKolI7MjBXHYJldHq99ojVq9A"
             }
           },
           "ServiceEndpoint": {
@@ -543,7 +543,7 @@
         "timeout": 6,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "GetExteriorEstimateLambdaVersionecC0Q2v4stXPXHuuXIrhN6STyg4VKWOHUVSzV1ZRk"
+        "versionLogicalId": "GetExteriorEstimateLambdaVersionECg3RS70vkohSqijPDrKolI7MjBXHYJldHq99ojVq9A"
       }
     },
     "configValidationMode": "warn",
@@ -565,7 +565,7 @@
     "artifact": "/Users/bryan/Code/ToddThomasPaintingApp/getExteriorEstimateLambda/.serverless/getExteriorEstimate.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/getExteriorEstimate/dev/1618278688635-2021-04-13T01:51:28.635Z",
+    "artifactDirectoryName": "serverless/getExteriorEstimate/dev/1618812840514-2021-04-19T06:14:00.514Z",
     "artifact": "getExteriorEstimate.zip"
   }
 }

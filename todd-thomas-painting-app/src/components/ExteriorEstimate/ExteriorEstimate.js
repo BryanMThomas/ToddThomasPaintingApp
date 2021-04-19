@@ -3,7 +3,7 @@ import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import { LineItems } from "../LineItems/LineItems";
 import styled from "styled-components";
-import { postExteriorEsimtate } from "../../utilities/api";
+import { postEsimtate } from "../../utilities/api";
 import { getDate } from "../../utilities/util";
 
 const Styles = styled.div`
@@ -96,7 +96,7 @@ export const ExteriorEstimate = () => {
       maximumPackagePricePdf: exteriorState.maximumPackagePrice,
       notes: exteriorState.note,
     };
-    postExteriorEsimtate(outputFileName, fields).then((response) => {
+    postEsimtate("ExteriorTemplateForm.pdf","ExteriorEstimates",outputFileName, fields).then((response) => {
       if (response.status !== 200) {
         //verify succesful call
         setExteriorState((prevState) => ({

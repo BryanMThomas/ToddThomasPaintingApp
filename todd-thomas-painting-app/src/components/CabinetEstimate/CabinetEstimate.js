@@ -3,8 +3,8 @@ import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import { LineItems } from "../LineItems/LineItems";
 import styled from "styled-components";
-//import { postExteriorEsimtate } from "../../utilities/api";
-//import { getDate } from "../../utilities/util";
+import { postEsimtate } from "../../utilities/api";
+import { getDate } from "../../utilities/util";
 
 const Styles = styled.div`
   margin-top: 2%;
@@ -112,39 +112,41 @@ export const CabinetEstimate = () => {
   };
 
   function createEstimate() {
-    //let date = getDate();
-    //let outputFileName = cabinetState.clientName.replace(" ", "") + "-" + date;
+    let date = getDate();
+    let outputFileName = cabinetState.clientName.replace(" ", "") + "-" + date;
     let fields = {
       clientNamePdf: cabinetState.clientName,
       clientAddressPdf: cabinetState.clientAddress,
       clientEmailPdf: cabinetState.clientEmail,
       clientPhonePdf: cabinetState.clientPhone,
-      openings: cabinetState.openings,
-      cabinetPrice: cabinetState.cabinetPrice,
+      openingsPdf: cabinetState.openings,
+      cabinetPricePdf: cabinetState.cabinetPrice,
       otherPrice: cabinetState.otherPrice,
-      totalPrice: cabinetState.totalPrice,
-      notes: cabinetState.note,
+      totalPdf: cabinetState.totalPrice,
+      notesPdf: cabinetState.note,
     };
     console.log("REQUEST BODY:" + JSON.stringify(fields));
-    // postExteriorEsimtate(outputFileName, fields).then((response) => {
-    //   if (response.status !== 200) {
-    //     //verify succesful call
-    //     setCabinetState((prevState) => ({
-    //       ...prevState,
-    //       responseData: { error: true },
-    //     }));
-    //   } else {
-    //     setCabinetState((prevState) => ({
-    //       ...prevState,
-    //       responseData: { response: response.status },
-    //     }));
-    //     let link =
-    //       "https://todd-thomas-painting.s3-us-west-2.amazonaws.com/ExteriorEstimates/" +
-    //       outputFileName +
-    //       ".pdf";
-    //     window.open(link);
-    //   }
-    // });
+
+    postEsimtate("CabinetTemplateForm2.pdf","CabinetEstimates",outputFileName, fields).then((response) => {
+      if (response.status !== 200) {
+        //verify succesful call
+        setCabinetState((prevState) => ({
+          ...prevState,
+          responseData: { error: true },
+        }));
+      } else {
+        setCabinetState((prevState) => ({
+          ...prevState,
+          responseData: { response: response.status },
+        }));
+        let link =
+          "https://todd-thomas-painting.s3-us-west-2.amazonaws.com/CabinetEstimates/" +
+          outputFileName +
+          ".pdf";
+        window.open(link);
+      }
+    });
+
   }
   const handleNoteChange = (e) => {
     let itemsTotal = 0;
@@ -165,7 +167,7 @@ export const CabinetEstimate = () => {
       "$" + itemsTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     let note = "";
     if (cabinetState.lineItems[0].description !== "") {
-      note = "Additional Items Prices Seperately:\n";
+      note = "Additional Items Priced Seperately:\n";
       cabinetState.lineItems.forEach((lineItem) => {
         note = note + "\n" + lineItem.description + "\t\t " + lineItem.cost;
       });
@@ -174,7 +176,7 @@ export const CabinetEstimate = () => {
 
     const { name, value } = e.target;
     if (cabinetState.noteTemp !== "" && name === "noteTemp") {
-      note = note + "Notes:\n" + value;
+      note = note + "Notes:\n\n" + value;
     }
     if (name === "noteTemp") {
       setCabinetState((prevState) => ({

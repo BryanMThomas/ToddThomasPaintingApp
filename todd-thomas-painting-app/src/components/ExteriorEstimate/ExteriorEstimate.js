@@ -19,7 +19,7 @@ const Styles = styled.div`
   }
 
   .listingsData {
-    width: 70%;
+    width: 70%; 
     max-width: 200px;
     float: left;
     display: inline-block;

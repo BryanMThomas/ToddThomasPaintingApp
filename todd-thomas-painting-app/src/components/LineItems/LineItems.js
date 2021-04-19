@@ -19,6 +19,7 @@ export const LineItems = (props) => {
   };
 
   // handle click event of the Remove button
+  //TODO update total on remove click
   const handleRemoveClick = (index) => {
     if (props.lineItems.length !== 1) {
       const list = [...props.lineItems];
@@ -38,8 +39,9 @@ export const LineItems = (props) => {
     <React.Fragment>
       <h4>Additional Line Items</h4>
       {props.lineItems.map((x, i) => {
+        let keyIndex = "index-" + i;
         return (
-          <Form>
+          <div key={keyIndex}>
             <Form.Row>
               <Col>
                 <Form.Control
@@ -69,7 +71,7 @@ export const LineItems = (props) => {
                 <Button onClick={handleAddClick}>Add</Button>
               </Form.Row>
             )}
-          </Form>
+          </div>
         );
       })}
     </React.Fragment>

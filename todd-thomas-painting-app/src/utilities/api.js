@@ -21,3 +21,17 @@ export const postEsimtate = (
     console.log("Exception: " + e);
   }
 };
+
+export const postCash = (value) => {
+  try {
+    return axios.post(
+      "https://kprt1ppwzc.execute-api.us-west-2.amazonaws.com/prod/cash",
+      {
+        value: value,
+      },
+      { timeout: 10000, headers: { "Content-Type": "application/json" } }
+    );
+  } catch (e) {
+    console.log("Exception: " + e);
+  }
+};

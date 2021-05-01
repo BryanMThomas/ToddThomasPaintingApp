@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
-import { LineItems } from "../LineItems/LineItems";
+import { InteriorLineItems } from "../InteriorLineItems/InteriorLineItems";
 import styled from "styled-components";
 import { postEsimtate } from "../../utilities/api";
 import { getDate } from "../../utilities/util";
@@ -39,8 +39,6 @@ export const InteriorEstimate = () => {
     noteTemp: "",
     responseData: {},
     lineItems: [{ description: "", cost: "" }],
-    interiorItems: [],
-    interiorItemsFormatted: "",
   });
   //METHODS
 
@@ -50,6 +48,61 @@ export const InteriorEstimate = () => {
       ...prevState,
       [name]: value,
     }));
+  };
+
+  const setLineItems = (list) => {
+    let itemsTotal = 0;
+    for (var i = 0; i < list.length; i++) {
+      itemsTotal += parseInt(list[i]["cost"].replace(/[$,]+/g, ""));
+    }
+    let total =
+      "$" + itemsTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    setInteriorState((prevState) => ({
+      ...prevState,
+      lineItems: list,
+      totalPrice: total,
+    }));
+  };
+
+  const handleNoteChange = (e) => {
+    let itemsTotal = 0;
+    for (var i = 0; i < interiorState.lineItems.length; i++) {
+      itemsTotal += parseInt(
+        interiorState.lineItems[i]["cost"].replace(/[$,]+/g, "")
+      );
+    }
+    let total =
+      "$" + itemsTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    let itemsTotalFormat =
+      "$" + itemsTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    let note = "";
+    if (interiorState.lineItems[0].description !== "") {
+      note = "Additional Items Priced Seperately:\n";
+      interiorState.lineItems.forEach((lineItem) => {
+        note = note + "\n" + lineItem.description + "\t\t " + lineItem.cost;
+      });
+      note = note + "\n\n";
+    }
+
+    const { name, value } = e.target;
+    if (interiorState.noteTemp !== "" && name === "noteTemp") {
+      note = note + "Notes:\n\n" + value;
+    }
+    if (name === "noteTemp") {
+      setInteriorState((prevState) => ({
+        ...prevState,
+        note: note,
+        noteTemp: value,
+      }));
+    } else {
+      setInteriorState((prevState) => ({
+        ...prevState,
+        note: note,
+        totalPrice: total,
+        otherPrice: itemsTotalFormat,
+      }));
+    }
   };
 
   function createEstimate() {
@@ -156,429 +209,11 @@ export const InteriorEstimate = () => {
             </Col>
           </Form.Row>
           <br />
-          <hr />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Entry: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="entry"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Formal Living Room: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="formalLivingRoom"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Formal Dining Room: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="formalDiningRoom"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Kitchen: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="kitchen"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Kitchen Eating Area: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="kitchenEatingArea"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Kitchen Pantry: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="kitchenPantry"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Family Room: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="familyRoom"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Master Bedroom: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="masterBedroom"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Master Bathroom: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="masterBathroom"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Master Closet: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="masterCloset"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Office: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="Office"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Bathroom #2: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="Bathroom2"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Bathroom #3: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="Bathroom3"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Bathroom #4: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="Bathroom4"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Bathroom #5: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="Bathroom5"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #2: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom2"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #2 Closet: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom2Closet"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #3: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom3"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #3 Closet: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom3Closet"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #4: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom4"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #4 Closet: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom4Closet"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #5: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom5"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #5 Closet: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom5Closet"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Hallway #1: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="hallway1"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Hallway #2: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="hallway2"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Laundry Room: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="laudryRoom"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Garage Walls: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="garageWalls"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Garage Ceiling: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="garageCeiling"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Total Passage Doors: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="passageDoors"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Total Closet Doors: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="closetDoors"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-
-          <br />
-          <LineItems lineItems={interiorState.lineItems} />
+          <InteriorLineItems
+            lineItems={interiorState.lineItems}
+            setLineItems={setLineItems}
+            handleNoteChange={handleNoteChange}
+          />
           <br />
           <Form.Row>
             <Form.Group as={Col}>
@@ -601,6 +236,7 @@ export const InteriorEstimate = () => {
                 value={interiorState.noteTemp}
                 as="textarea"
                 rows={3}
+                onChange={handleNoteChange}
               />
             </Col>
           </Form.Row>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
-import { LineItems } from "../LineItems/LineItems";
+import { InteriorLineItems } from "../InteriorLineItems/InteriorLineItems";
 import styled from "styled-components";
 import { postEsimtate } from "../../utilities/api";
 import { getDate } from "../../utilities/util";
@@ -35,12 +35,11 @@ export const InteriorEstimate = () => {
     clientPhone: "",
     clientEmail: "",
     totalPrice: "0",
-    note: "",
-    noteTemp: "",
+    notes: "",
+    lineItemsDesc: "",
+    lineItemsCost: "",
     responseData: {},
     lineItems: [{ description: "", cost: "" }],
-    interiorItems: [],
-    interiorItemsFormatted: "",
   });
   //METHODS
 
@@ -52,6 +51,46 @@ export const InteriorEstimate = () => {
     }));
   };
 
+  const setLineItems = (list) => {
+    let itemsTotal = 0;
+    for (var i = 0; i < list.length; i++) {
+      itemsTotal += parseInt(list[i]["cost"].replace(/[$,]+/g, ""));
+    }
+    let total =
+      "$" + itemsTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    setInteriorState((prevState) => ({
+      ...prevState,
+      lineItems: list,
+      totalPrice: total,
+    }));
+  };
+
+  const handleLineItemFormatChange = (e) => {
+    let itemsTotal = 0;
+    for (var i = 0; i < interiorState.lineItems.length; i++) {
+      itemsTotal += parseInt(
+        interiorState.lineItems[i]["cost"].replace(/[$,]+/g, "")
+      );
+    }
+    let total =
+      "$" + itemsTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    let formattedItemsDesc = "";
+    let formattedItemsCost = "";
+    if (interiorState.lineItems[0].description !== "") {
+      interiorState.lineItems.forEach((lineItem) => {
+        formattedItemsDesc = formattedItemsDesc + "\n" + lineItem.description;
+        formattedItemsCost = formattedItemsCost + "\n" + lineItem.cost;
+      });
+    }
+    setInteriorState((prevState) => ({
+      ...prevState,
+      lineItemsDesc: formattedItemsDesc,
+      lineItemsCost: formattedItemsCost,
+      totalPrice: total,
+    }));
+  };
+
   function createEstimate() {
     let date = getDate();
     let outputFileName = interiorState.clientName.replace(" ", "") + "-" + date;
@@ -60,32 +99,37 @@ export const InteriorEstimate = () => {
       clientAddressPdf: interiorState.clientAddress,
       clientEmailPdf: interiorState.clientEmail,
       clientPhonePdf: interiorState.clientPhone,
-      openingsPdf: interiorState.openings,
       totalPdf: interiorState.totalPrice,
-      notesPdf: interiorState.note,
-      interiorItemsPdf: interiorState.interiorItemsFormatted,
+      lineItemsDescPdf: interiorState.lineItemsDesc,
+      lineItemsCostPdf: interiorState.lineItemsCost,
+      notesPdf: interiorState.notes,
     };
     console.log("REQUEST BODY:" + JSON.stringify(fields));
 
-    // postEsimtate("CabinetTemplateForm2.pdf","CabinetEstimates",outputFileName, fields).then((response) => {
-    //   if (response.status !== 200) {
-    //     //verify succesful call
-    //     setCabinetState((prevState) => ({
-    //       ...prevState,
-    //       responseData: { error: true },
-    //     }));
-    //   } else {
-    //     setCabinetState((prevState) => ({
-    //       ...prevState,
-    //       responseData: { response: response.status },
-    //     }));
-    //     let link =
-    //       "https://todd-thomas-painting.s3-us-west-2.amazonaws.com/CabinetEstimates/" +
-    //       outputFileName +
-    //       ".pdf";
-    //     window.open(link);
-    //   }
-    // });
+    postEsimtate(
+      "ServiceTemplateForm.pdf",
+      "InteriorEstimates",
+      outputFileName,
+      fields
+    ).then((response) => {
+      if (response.status !== 200) {
+        //verify succesful call
+        setInteriorState((prevState) => ({
+          ...prevState,
+          responseData: { error: true },
+        }));
+      } else {
+        setInteriorState((prevState) => ({
+          ...prevState,
+          responseData: { response: response.status },
+        }));
+        let link =
+          "https://todd-thomas-painting.s3-us-west-2.amazonaws.com/InteriorEstimates/" +
+          outputFileName +
+          ".pdf";
+        window.open(link);
+      }
+    });
   }
   const handleSubmit = () => {
     createEstimate();
@@ -156,435 +200,17 @@ export const InteriorEstimate = () => {
             </Col>
           </Form.Row>
           <br />
-          <hr />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Entry: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="entry"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Formal Living Room: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="formalLivingRoom"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Formal Dining Room: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="formalDiningRoom"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Kitchen: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="kitchen"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Kitchen Eating Area: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="kitchenEatingArea"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Kitchen Pantry: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="kitchenPantry"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Family Room: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="familyRoom"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Master Bedroom: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="masterBedroom"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Master Bathroom: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="masterBathroom"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Master Closet: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="masterCloset"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Office: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="Office"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Bathroom #2: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="Bathroom2"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Bathroom #3: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="Bathroom3"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Bathroom #4: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="Bathroom4"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Bathroom #5: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="Bathroom5"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #2: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom2"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #2 Closet: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom2Closet"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #3: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom3"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #3 Closet: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom3Closet"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #4: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom4"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #4 Closet: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom4Closet"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #5: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom5"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Guest Bedroom #5 Closet: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="guestBedroom5Closet"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Hallway #1: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="hallway1"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Hallway #2: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="hallway2"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Laundry Room: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="laudryRoom"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Garage Walls: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="garageWalls"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Garage Ceiling: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="garageCeiling"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Total Passage Doors: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="passageDoors"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Col xs="4">
-              <Form.Label>Total Closet Doors: </Form.Label>
-            </Col>
-            <Col xs="7">
-              <Form.Control
-                name="closetDoors"
-                type="number"
-                required
-                onChange={handleStateChange}
-              />
-            </Col>
-          </Form.Row>
-
-          <br />
-          <LineItems lineItems={interiorState.lineItems} />
+          <InteriorLineItems
+            lineItems={interiorState.lineItems}
+            setLineItems={setLineItems}
+            handleLineItemFormatChange={handleLineItemFormatChange}
+          />
           <br />
           <Form.Row>
             <Form.Group as={Col}>
               <Form.Label>Total Price</Form.Label>
               <Form.Control
-                name="cabinetPrice"
+                name="totalPrice"
                 type="text"
                 readOnly
                 value={interiorState.totalPrice}
@@ -597,10 +223,11 @@ export const InteriorEstimate = () => {
             <Col xs="8">
               <Form.Label>Additional Notes</Form.Label>
               <Form.Control
-                name="noteTemp"
-                value={interiorState.noteTemp}
+                name="notes"
+                value={interiorState.notes}
                 as="textarea"
                 rows={3}
+                onChange={handleStateChange}
               />
             </Col>
           </Form.Row>

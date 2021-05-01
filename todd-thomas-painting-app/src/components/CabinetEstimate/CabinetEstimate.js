@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
-import { LineItems } from "../LineItems/LineItems";
+import { InteriorLineItems } from "../InteriorLineItems/InteriorLineItems";
 import styled from "styled-components";
 import { postEsimtate } from "../../utilities/api";
 import { getDate } from "../../utilities/util";
@@ -40,8 +40,9 @@ export const CabinetEstimate = () => {
     cabinetPrice: "0",
     otherPrice: "0",
     totalPrice: "0",
-    note: "",
-    noteTemp: "",
+    notes: "",
+    lineItemsDesc: "",
+    lineItemsCost: "",
     responseData: {},
     lineItems: [{ description: "", cost: "" }],
   });
@@ -51,14 +52,8 @@ export const CabinetEstimate = () => {
     for (var i = 0; i < list.length; i++) {
       itemsTotal += parseInt(list[i]["cost"].replace(/[$,]+/g, ""));
     }
-    let cabinetTotal = parseInt(
-      cabinetState.cabinetPrice.replace(/[$,]+/g, "")
-    );
     let total =
-      "$" +
-      (itemsTotal + cabinetTotal)
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      "$" + itemsTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     let itemsTotalFormat =
       "$" + itemsTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
@@ -75,13 +70,7 @@ export const CabinetEstimate = () => {
     //Set Sqft
     setCabinetState((prevState) => ({
       ...prevState,
-      openings: value,
       cabinetPrice: "$" + cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
-      totalPrice:
-        "$" +
-        (cost + parseInt(cabinetState.otherPrice.replace(/[$,]+/g, "")))
-          .toString()
-          .replace(/\B(?=(\d{3})+(?!\d))/g, ","),
     }));
   };
   const handleCabinetPriceChange = (e) => {
@@ -90,10 +79,9 @@ export const CabinetEstimate = () => {
     if (!priceString.includes("$")) {
       priceString = "$" + priceString;
     }
-    let cabinetPriceInt = parseInt(priceString.replace(/[$,]+/g, ""));
     let otherPriceInt = parseInt(cabinetState.otherPrice.replace(/[$,]+/g, ""));
-    let totalInt = cabinetPriceInt + otherPriceInt;
-    let total = "$" + totalInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    let total =
+      "$" + otherPriceInt.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
     //Set Sqft
     setCabinetState((prevState) => ({
@@ -119,15 +107,19 @@ export const CabinetEstimate = () => {
       clientAddressPdf: cabinetState.clientAddress,
       clientEmailPdf: cabinetState.clientEmail,
       clientPhonePdf: cabinetState.clientPhone,
-      openingsPdf: cabinetState.openings,
-      cabinetPricePdf: cabinetState.cabinetPrice,
-      otherPrice: cabinetState.otherPrice,
       totalPdf: cabinetState.totalPrice,
-      notesPdf: cabinetState.note,
+      lineItemsDescPdf: cabinetState.lineItemsDesc,
+      lineItemsCostPdf: cabinetState.lineItemsCost,
+      notesPdf: cabinetState.notes,
     };
     console.log("REQUEST BODY:" + JSON.stringify(fields));
 
-    postEsimtate("CabinetTemplateForm.pdf","CabinetEstimates",outputFileName, fields).then((response) => {
+    postEsimtate(
+      "ServiceTemplateForm.pdf",
+      "CabinetEstimates",
+      outputFileName,
+      fields
+    ).then((response) => {
       if (response.status !== 200) {
         //verify succesful call
         setCabinetState((prevState) => ({
@@ -146,52 +138,34 @@ export const CabinetEstimate = () => {
         window.open(link);
       }
     });
-
   }
-  const handleNoteChange = (e) => {
+
+  const handleLineItemFormatChange = (e) => {
     let itemsTotal = 0;
     for (var i = 0; i < cabinetState.lineItems.length; i++) {
       itemsTotal += parseInt(
         cabinetState.lineItems[i]["cost"].replace(/[$,]+/g, "")
       );
     }
-    let cabinetTotal = parseInt(
-      cabinetState.cabinetPrice.replace(/[$,]+/g, "")
-    );
     let total =
-      "$" +
-      (itemsTotal + cabinetTotal)
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      "$" + itemsTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     let itemsTotalFormat =
       "$" + itemsTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    let note = "";
+    let formattedItemsDesc = "";
+    let formattedItemsCost = "";
     if (cabinetState.lineItems[0].description !== "") {
-      note = "Additional Items Priced Seperately:\n";
       cabinetState.lineItems.forEach((lineItem) => {
-        note = note + "\n" + lineItem.description + "\t\t " + lineItem.cost;
+        formattedItemsDesc = formattedItemsDesc + "\n" + lineItem.description;
+        formattedItemsCost = formattedItemsCost + "\n" + lineItem.cost;
       });
-      note = note + "\n\n";
     }
-
-    const { name, value } = e.target;
-    if (cabinetState.noteTemp !== "" && name === "noteTemp") {
-      note = note + "Notes:\n\n" + value;
-    }
-    if (name === "noteTemp") {
-      setCabinetState((prevState) => ({
-        ...prevState,
-        note: note,
-        noteTemp: value,
-      }));
-    } else {
-      setCabinetState((prevState) => ({
-        ...prevState,
-        note: note,
-        totalPrice: total,
-        otherPrice: itemsTotalFormat,
-      }));
-    }
+    setCabinetState((prevState) => ({
+      ...prevState,
+      lineItemsDesc: formattedItemsDesc,
+      lineItemsCost: formattedItemsCost,
+      totalPrice: total,
+      otherPrice: itemsTotalFormat,
+    }));
   };
 
   const handleSubmit = () => {
@@ -276,32 +250,33 @@ export const CabinetEstimate = () => {
             <Col xs="3">
               <Form.Label>Openings: </Form.Label>
             </Col>
-            <Col xs="7">
+            <Col xs="3">
               <Form.Control
                 name="openings"
                 type="number"
-                placeholder="Enter # of Openings"
+                placeholder="# of Openings"
                 required
                 onChange={handleOpeningsChange}
               />
             </Col>
-          </Form.Row>
-          <br />
-          <Form.Row>
-            <Form.Group as={Col}>
-              <Form.Label>Cabinets Price</Form.Label>
+            <Col xs="3">
+              <Form.Label>Price:</Form.Label>
+            </Col>
+            <Col xs="3">
               <Form.Control
                 name="cabinetPrice"
                 type="text"
+                readOnly
                 value={cabinetState.cabinetPrice}
                 onChange={handleCabinetPriceChange}
               />
-            </Form.Group>
+            </Col>
           </Form.Row>
-          <LineItems
+          <br />
+          <InteriorLineItems
             lineItems={cabinetState.lineItems}
             setLineItems={setLineItems}
-            handleNoteChange={handleNoteChange}
+            handleLineItemFormatChange={handleLineItemFormatChange}
           />
           <br />
           <Form.Row>
@@ -321,11 +296,11 @@ export const CabinetEstimate = () => {
             <Col xs="8">
               <Form.Label>Additional Notes</Form.Label>
               <Form.Control
-                name="noteTemp"
-                value={cabinetState.noteTemp}
+                name="notes"
+                value={cabinetState.notes}
                 as="textarea"
                 rows={3}
-                onChange={handleNoteChange}
+                onChange={handleStateChange}
               />
             </Col>
           </Form.Row>

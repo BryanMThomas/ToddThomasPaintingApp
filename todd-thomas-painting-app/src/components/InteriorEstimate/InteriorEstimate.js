@@ -35,8 +35,9 @@ export const InteriorEstimate = () => {
     clientPhone: "",
     clientEmail: "",
     totalPrice: "0",
-    note: "",
-    noteTemp: "",
+    notes: "",
+    lineItemsDesc: "",
+    lineItemsCost: "",
     responseData: {},
     lineItems: [{ description: "", cost: "" }],
   });
@@ -65,7 +66,7 @@ export const InteriorEstimate = () => {
     }));
   };
 
-  const handleNoteChange = (e) => {
+  const handleLineItemFormatChange = (e) => {
     let itemsTotal = 0;
     for (var i = 0; i < interiorState.lineItems.length; i++) {
       itemsTotal += parseInt(
@@ -74,35 +75,20 @@ export const InteriorEstimate = () => {
     }
     let total =
       "$" + itemsTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    let itemsTotalFormat =
-      "$" + itemsTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    let note = "";
+    let formattedItemsDesc = "";
+    let formattedItemsCost = "";
     if (interiorState.lineItems[0].description !== "") {
-      note = "Additional Items Priced Seperately:\n";
       interiorState.lineItems.forEach((lineItem) => {
-        note = note + "\n" + lineItem.description + "\t\t " + lineItem.cost;
+        formattedItemsDesc = formattedItemsDesc + "\n" + lineItem.description;
+        formattedItemsCost = formattedItemsCost + "\n" + lineItem.cost;
       });
-      note = note + "\n\n";
     }
-
-    const { name, value } = e.target;
-    if (interiorState.noteTemp !== "" && name === "noteTemp") {
-      note = note + "Notes:\n\n" + value;
-    }
-    if (name === "noteTemp") {
-      setInteriorState((prevState) => ({
-        ...prevState,
-        note: note,
-        noteTemp: value,
-      }));
-    } else {
-      setInteriorState((prevState) => ({
-        ...prevState,
-        note: note,
-        totalPrice: total,
-        otherPrice: itemsTotalFormat,
-      }));
-    }
+    setInteriorState((prevState) => ({
+      ...prevState,
+      lineItemsDesc: formattedItemsDesc,
+      lineItemsCost: formattedItemsCost,
+      totalPrice: total,
+    }));
   };
 
   function createEstimate() {
@@ -113,32 +99,37 @@ export const InteriorEstimate = () => {
       clientAddressPdf: interiorState.clientAddress,
       clientEmailPdf: interiorState.clientEmail,
       clientPhonePdf: interiorState.clientPhone,
-      openingsPdf: interiorState.openings,
       totalPdf: interiorState.totalPrice,
-      notesPdf: interiorState.note,
-      interiorItemsPdf: interiorState.interiorItemsFormatted,
+      lineItemsDescPdf: interiorState.lineItemsDesc,
+      lineItemsCostPdf: interiorState.lineItemsCost,
+      notesPdf: interiorState.notes,
     };
     console.log("REQUEST BODY:" + JSON.stringify(fields));
 
-    // postEsimtate("CabinetTemplateForm2.pdf","CabinetEstimates",outputFileName, fields).then((response) => {
-    //   if (response.status !== 200) {
-    //     //verify succesful call
-    //     setCabinetState((prevState) => ({
-    //       ...prevState,
-    //       responseData: { error: true },
-    //     }));
-    //   } else {
-    //     setCabinetState((prevState) => ({
-    //       ...prevState,
-    //       responseData: { response: response.status },
-    //     }));
-    //     let link =
-    //       "https://todd-thomas-painting.s3-us-west-2.amazonaws.com/CabinetEstimates/" +
-    //       outputFileName +
-    //       ".pdf";
-    //     window.open(link);
-    //   }
-    // });
+    postEsimtate(
+      "ServiceTemplateForm.pdf",
+      "InteriorEstimates",
+      outputFileName,
+      fields
+    ).then((response) => {
+      if (response.status !== 200) {
+        //verify succesful call
+        setInteriorState((prevState) => ({
+          ...prevState,
+          responseData: { error: true },
+        }));
+      } else {
+        setInteriorState((prevState) => ({
+          ...prevState,
+          responseData: { response: response.status },
+        }));
+        let link =
+          "https://todd-thomas-painting.s3-us-west-2.amazonaws.com/InteriorEstimates/" +
+          outputFileName +
+          ".pdf";
+        window.open(link);
+      }
+    });
   }
   const handleSubmit = () => {
     createEstimate();
@@ -212,14 +203,14 @@ export const InteriorEstimate = () => {
           <InteriorLineItems
             lineItems={interiorState.lineItems}
             setLineItems={setLineItems}
-            handleNoteChange={handleNoteChange}
+            handleLineItemFormatChange={handleLineItemFormatChange}
           />
           <br />
           <Form.Row>
             <Form.Group as={Col}>
               <Form.Label>Total Price</Form.Label>
               <Form.Control
-                name="cabinetPrice"
+                name="totalPrice"
                 type="text"
                 readOnly
                 value={interiorState.totalPrice}
@@ -232,11 +223,11 @@ export const InteriorEstimate = () => {
             <Col xs="8">
               <Form.Label>Additional Notes</Form.Label>
               <Form.Control
-                name="noteTemp"
-                value={interiorState.noteTemp}
+                name="notes"
+                value={interiorState.notes}
                 as="textarea"
                 rows={3}
-                onChange={handleNoteChange}
+                onChange={handleStateChange}
               />
             </Col>
           </Form.Row>

@@ -29,9 +29,9 @@ const Styles = styled.div`
 `;
 export const ExteriorEstimate = () => {
   //PRICING CONSTS
-  const deluxeRate = 1.15;
+  const deluxeRate = 1.17;
   const ultimateRate = 1.22;
-  const maximumRate = 1.35;
+  const maximumRate = 1.30;
   //STATE VARIABLES
   const [exteriorState, setExteriorState] = useState({
     clientName: "",

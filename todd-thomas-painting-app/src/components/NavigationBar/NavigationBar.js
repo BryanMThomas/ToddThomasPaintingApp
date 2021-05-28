@@ -28,11 +28,14 @@ export const NavigationBar = () => {
               <Nav.Link href="/exterior-estimate">Exterior</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link href="/interior-estimate">Interior</Nav.Link>
+              <Nav.Link href="/service-estimate">Service</Nav.Link>
             </Nav.Item>
             <Nav.Item>
               <Nav.Link href="/cabinet-estimate">Cabinet</Nav.Link>
             </Nav.Item>
+            <Nav.Item>
+              <Nav.Link href="/invoice">Invoice</Nav.Link>
+            </Nav.Item> 
           </Nav>
         </Navbar.Collapse>
       </Navbar>

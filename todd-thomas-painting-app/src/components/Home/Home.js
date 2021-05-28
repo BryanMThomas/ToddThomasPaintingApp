@@ -10,14 +10,19 @@ export const Home = () => {
           <p>Create an Estimate for Exterior Home Project</p>
         </a>
 
-        <a href="/interior-estimate" className={styles.card}>
-          <h3>Interior Estimate &rarr;</h3>
-          <p>Create an Estimate for Interior or Line Item Paint Project</p>
+        <a href="/service-estimate" className={styles.card}>
+          <h3>Service Estimate &rarr;</h3>
+          <p>Create an Estimate for any Service or Line Item Paint Project</p>
         </a>
 
         <a href="/cabinet-estimate" className={styles.card}>
           <h3>Cabinet Estimate &rarr;</h3>
           <p>Create an Estimate for Cabinet Paint Project</p>
+        </a>
+
+        <a href="/invoice" className={styles.card}>
+          <h3>Invoice &rarr;</h3>
+          <p>Create an Invoice for a client with amount due</p>
         </a>
 
         <a href="/cash-entry" className={styles.card}>

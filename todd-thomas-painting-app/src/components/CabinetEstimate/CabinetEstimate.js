@@ -29,7 +29,7 @@ const Styles = styled.div`
 `;
 export const CabinetEstimate = () => {
   //PRICING CONSTS
-  const pricePerOpening = 75;
+  const pricePerOpening = 100;
   //STATE VARIABLES
   const [cabinetState, setCabinetState] = useState({
     clientName: "",
@@ -115,7 +115,7 @@ export const CabinetEstimate = () => {
     console.log("REQUEST BODY:" + JSON.stringify(fields));
 
     postEsimtate(
-      "ServiceTemplateForm.pdf",
+      "CabinetServiceTemplateForm.pdf",
       "CabinetEstimates",
       outputFileName,
       fields

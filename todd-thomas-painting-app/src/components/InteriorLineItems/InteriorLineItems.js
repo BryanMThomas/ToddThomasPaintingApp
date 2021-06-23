@@ -37,7 +37,7 @@ export const InteriorLineItems = (props) => {
 
   return (
     <React.Fragment>
-      <h4>Interior Line Items</h4>
+      <h4>Additional Line Items</h4>
       {props.lineItems.map((x, i) => {
         let keyIndex = "index-" + i;
         return (

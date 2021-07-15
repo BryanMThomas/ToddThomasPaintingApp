@@ -29,6 +29,11 @@ export const Home = () => {
           <h3>Cash Entry &rarr;</h3>
           <p>Cash Entry</p>
         </a>
+
+        <a href="/past-estimates" className={styles.card}>
+          <h3>Past Estimates &rarr;</h3>
+          <p>List of all past Estimates</p>
+        </a>
       </div>
     </Layout>
   );

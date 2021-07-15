@@ -79,9 +79,19 @@ export const Invoice = () => {
     let formattedItemsDesc = "";
     let formattedItemsCost = "";
     if (invoiceState.lineItems[0].description !== "") {
-      invoiceState.lineItems.forEach((lineItem) => {
-        formattedItemsDesc = formattedItemsDesc + "\n" + lineItem.description;
-        formattedItemsCost = formattedItemsCost + "\n" + lineItem.cost;
+      invoiceState.lineItems.forEach((lineItem, index) => {
+        //First Item
+        if (index === 0) {
+          formattedItemsDesc = lineItem.description;
+          formattedItemsCost = lineItem.cost;
+        } else {
+          //Every other item
+          let lineHeight = Math.floor(lineItem.description.length / 30);
+          formattedItemsDesc =
+            formattedItemsDesc + "\n\n" + lineItem.description;
+          formattedItemsCost =
+            formattedItemsCost + "\n".repeat(lineHeight + 2) + lineItem.cost;
+        }
       });
     }
     setInvoiceState((prevState) => ({
@@ -93,7 +103,11 @@ export const Invoice = () => {
   };
 
   function createEstimate() {
-    let outputFileName = "ToddThomasPainting_Invoice_" + invoiceState.clientName.replace(" ", "") + "-" +invoiceState.invoiceNumber;
+    let outputFileName =
+      "ToddThomasPainting_Invoice_" +
+      invoiceState.clientName.replace(" ", "") +
+      "-" +
+      invoiceState.invoiceNumber;
     let fields = {
       invoiceNumberPdf: invoiceState.invoiceNumber,
       clientNamePdf: invoiceState.clientName,
@@ -144,7 +158,7 @@ export const Invoice = () => {
         <h1>Invoice</h1>
         <br />
         <Form>
-        <Form.Row>
+          <Form.Row>
             <Col xs="4">
               <Form.Label>Invoice Number: </Form.Label>
             </Col>

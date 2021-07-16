@@ -37,13 +37,7 @@ export const postCash = (value) => {
 };
 
 export const getEstimates = () => {
-  try {
-    return axios.get(
-      "https://kprt1ppwzc.execute-api.us-west-2.amazonaws.com/prod/cash",
-      {},
-      { timeout: 10000, headers: { "Content-Type": "application/json" } }
-    );
-  } catch (e) {
-    console.log("Exception: " + e);
-  }
+  return axios.get(
+    "https://kprt1ppwzc.execute-api.us-west-2.amazonaws.com/prod/estimates", { timeout: 10000, headers: { "Content-Type": "application/json" } }
+  );
 };

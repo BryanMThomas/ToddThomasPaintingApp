@@ -7,26 +7,8 @@ import { getEstimates } from "../../utilities/api";
 const Styles = styled.div`
   margin-top: 2%;
   margin-left: 3%;
-  .listingsFilter {
-    width: 30%;
-    max-width: 425px;
-    display: inline-block;
-    float: left;
-    background-color: #d3d3d3;
-    padding: 15px;
-  }
-
-  .listingsData {
-    width: 70%;
-    max-width: 200px;
-    float: left;
-    display: inline-block;
-    padding: 15px;
-    margin-left: 30px;
-  }
 `;
 const s3Url = "https://todd-thomas-painting.s3.us-west-2.amazonaws.com/";
-let y;
 export const PastEstimates = () => {
   //STATE VARIABLES
   const [estimatesState, setEstimatesState] = useState({});
@@ -51,17 +33,15 @@ export const PastEstimates = () => {
     return <p>LOADING DATA...</p>;
   } else {
     return (
-      <Layout>
         <Styles>
           <h1>Past Estimates</h1>
           <br />
           <Accordion>
-            <Card style={{ width: "80rem" }}>
+            <Card>
               <Card.Header>
                 <Accordion.Toggle
                   as={Button}
                   eventKey="0"
-                  style={{ width: "50rem" }}
                 >
                   Exterior Estimates
                 </Accordion.Toggle>
@@ -87,12 +67,11 @@ export const PastEstimates = () => {
               </Accordion.Collapse>
             </Card>
             <br />
-            <Card style={{ width: "80rem" }}>
+            <Card >
               <Card.Header>
                 <Accordion.Toggle
                   as={Button}
                   eventKey="1"
-                  style={{ width: "50rem" }}
                 >
                   Service Estimates
                 </Accordion.Toggle>
@@ -118,12 +97,11 @@ export const PastEstimates = () => {
               </Accordion.Collapse>
             </Card>
             <br />
-            <Card style={{ width: "80rem" }}>
+            <Card >
               <Card.Header>
                 <Accordion.Toggle
                   as={Button}
                   eventKey="2"
-                  style={{ width: "50rem" }}
                 >
                   Cabinet Estimates
                 </Accordion.Toggle>
@@ -149,12 +127,11 @@ export const PastEstimates = () => {
               </Accordion.Collapse>
             </Card>
             <br />
-            <Card style={{ width: "80rem" }}>
+            <Card >
               <Card.Header>
                 <Accordion.Toggle
                   as={Button}
                   eventKey="3"
-                  style={{ width: "50rem" }}
                 >
                   Invoices
                 </Accordion.Toggle>
@@ -178,7 +155,6 @@ export const PastEstimates = () => {
             </Card>
           </Accordion>
         </Styles>
-      </Layout>
     );
   }
 };

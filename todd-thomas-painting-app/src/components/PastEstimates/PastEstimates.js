@@ -55,7 +55,7 @@ export const PastEstimates = () => {
         <Styles>
           <h1>Past Estimates</h1>
           <br />
-          <Accordion defaultActiveKey="1">
+          <Accordion>
             <Card style={{ width: "80rem" }}>
               <Card.Header>
                 <Accordion.Toggle

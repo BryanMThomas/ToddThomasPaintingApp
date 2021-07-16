@@ -153,10 +153,21 @@ export const CabinetEstimate = () => {
       "$" + itemsTotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     let formattedItemsDesc = "";
     let formattedItemsCost = "";
+
     if (cabinetState.lineItems[0].description !== "") {
-      cabinetState.lineItems.forEach((lineItem) => {
-        formattedItemsDesc = formattedItemsDesc + "\n" + lineItem.description;
-        formattedItemsCost = formattedItemsCost + "\n" + lineItem.cost;
+      cabinetState.lineItems.forEach((lineItem, index) => {
+        //First Item
+        if (index === 0) {
+          formattedItemsDesc = lineItem.description;
+          formattedItemsCost = lineItem.cost;
+        } else {
+          //Every other item
+          let lineHeight = Math.floor(lineItem.description.length / 30);
+          formattedItemsDesc =
+            formattedItemsDesc + "\n\n" + lineItem.description;
+          formattedItemsCost =
+            formattedItemsCost + "\n".repeat(lineHeight + 2) + lineItem.cost;
+        }
       });
     }
     setCabinetState((prevState) => ({

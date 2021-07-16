@@ -78,9 +78,19 @@ export const ServiceEstimate = () => {
     let formattedItemsDesc = "";
     let formattedItemsCost = "";
     if (serviceState.lineItems[0].description !== "") {
-      serviceState.lineItems.forEach((lineItem) => {
-        formattedItemsDesc = formattedItemsDesc + "\n" + lineItem.description;
-        formattedItemsCost = formattedItemsCost + "\n" + lineItem.cost;
+      serviceState.lineItems.forEach((lineItem, index) => {
+        //First Item
+        if (index === 0) {
+          formattedItemsDesc = lineItem.description;
+          formattedItemsCost = lineItem.cost;
+        } else {
+          //Every other item
+          let lineHeight = Math.floor(lineItem.description.length / 30);
+          formattedItemsDesc =
+            formattedItemsDesc + "\n\n" + lineItem.description;
+          formattedItemsCost =
+            formattedItemsCost + "\n".repeat(lineHeight + 2) + lineItem.cost;
+        }
       });
     }
     setServiceState((prevState) => ({

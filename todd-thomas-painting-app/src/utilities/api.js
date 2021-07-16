@@ -35,3 +35,9 @@ export const postCash = (value) => {
     console.log("Exception: " + e);
   }
 };
+
+export const getEstimates = () => {
+  return axios.get(
+    "https://kprt1ppwzc.execute-api.us-west-2.amazonaws.com/prod/estimates", { timeout: 10000, headers: { "Content-Type": "application/json" } }
+  );
+};

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Accordion, Card, Button } from "react-bootstrap";
-import Layout from "../Layout/Layout";
 import styled from "styled-components";
 import { getEstimates } from "../../utilities/api";
+import { compareDatesS3Objects, formatDate } from "../../utilities/util";
 
 const Styles = styled.div`
   margin-top: 2%;
@@ -15,12 +15,24 @@ export const PastEstimates = () => {
   useEffect(() => {
     getEstimates()
       .then((response) => {
-        console.log(JSON.stringify(response));
         if (response.data.statusCode !== 200) {
           //verify succesful call
           setEstimatesState({ error: true });
         } else {
-          setEstimatesState(response.data.body);
+          //Sort by date
+          let exteriors = response.data.body.Exterior.Contents.sort(
+            compareDatesS3Objects
+          );
+          let services = response.data.body.Service.Contents.sort(
+            compareDatesS3Objects
+          );
+          let cabinets = response.data.body.Cabinet.Contents.sort(
+            compareDatesS3Objects
+          );
+          let invoices = response.data.body.Invoices.Contents.sort(
+            compareDatesS3Objects
+          );
+          setEstimatesState({ exteriors, services, cabinets, invoices });
         }
       })
       .catch((error) => {
@@ -33,128 +45,119 @@ export const PastEstimates = () => {
     return <p>LOADING DATA...</p>;
   } else {
     return (
-        <Styles>
-          <h1>Past Estimates</h1>
+      <Styles>
+        <h1>Past Estimates</h1>
+        <br />
+        <Accordion>
+          <Card>
+            <Card.Header>
+              <Accordion.Toggle as={Button} eventKey="0">
+                Exterior Estimates
+              </Accordion.Toggle>
+            </Card.Header>
+            <Accordion.Collapse eventKey="0">
+              <Card.Body>
+                {estimatesState.exteriors.map((element, index) => (
+                  <p>
+                    <a
+                      key={`exterior-estimate-${index}`}
+                      href={s3Url + element.Key}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {element.Key.toString().replace("ExteriorEstimates/", "")}
+                    </a>
+                    {element.Key === "ExteriorEstimates/"
+                      ? null
+                      : "\tCreated: \t" + formatDate(element.LastModified)}
+                  </p>
+                ))}
+              </Card.Body>
+            </Accordion.Collapse>
+          </Card>
           <br />
-          <Accordion>
-            <Card>
-              <Card.Header>
-                <Accordion.Toggle
-                  as={Button}
-                  eventKey="0"
-                >
-                  Exterior Estimates
-                </Accordion.Toggle>
-              </Card.Header>
-              <Accordion.Collapse eventKey="0">
-                <Card.Body>
-                  {estimatesState.Exterior.Contents.map((element, index) => (
-                    <p>
-                      <a
-                        key={`exterior-estimate-${index}`}
-                        href={s3Url + element.Key}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {element.Key.toString().replace(
-                          "ExteriorEstimates/",
-                          ""
-                        )}
-                      </a>
-                    </p>
-                  ))}
-                </Card.Body>
-              </Accordion.Collapse>
-            </Card>
-            <br />
-            <Card >
-              <Card.Header>
-                <Accordion.Toggle
-                  as={Button}
-                  eventKey="1"
-                >
-                  Service Estimates
-                </Accordion.Toggle>
-              </Card.Header>
-              <Accordion.Collapse eventKey="1">
-                <Card.Body>
-                  {estimatesState.Service.Contents.map((element, index) => (
-                    <p>
-                      <a
-                        key={`service-estimate-${index}`}
-                        href={s3Url + element.Key}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {element.Key.toString().replace(
-                          "InteriorEstimates/",
-                          ""
-                        )}
-                      </a>
-                    </p>
-                  ))}
-                </Card.Body>
-              </Accordion.Collapse>
-            </Card>
-            <br />
-            <Card >
-              <Card.Header>
-                <Accordion.Toggle
-                  as={Button}
-                  eventKey="2"
-                >
-                  Cabinet Estimates
-                </Accordion.Toggle>
-              </Card.Header>
-              <Accordion.Collapse eventKey="2">
-                <Card.Body>
-                  {estimatesState.Cabinet.Contents.map((element, index) => (
-                    <p>
-                      <a
-                        key={`cabinet-estimate-${index}`}
-                        href={s3Url + element.Key}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {element.Key.toString().replace(
-                          "CabinetEstimates/",
-                          ""
-                        )}
-                      </a>
-                    </p>
-                  ))}
-                </Card.Body>
-              </Accordion.Collapse>
-            </Card>
-            <br />
-            <Card >
-              <Card.Header>
-                <Accordion.Toggle
-                  as={Button}
-                  eventKey="3"
-                >
-                  Invoices
-                </Accordion.Toggle>
-              </Card.Header>
-              <Accordion.Collapse eventKey="3">
-                <Card.Body>
-                  {estimatesState.Invoices.Contents.map((element, index) => (
-                    <p>
-                      <a
-                        key={`invoices-${index}`}
-                        href={s3Url + element.Key}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {element.Key.toString().replace("Invoices/", "")}
-                      </a>
-                    </p>
-                  ))}
-                </Card.Body>
-              </Accordion.Collapse>
-            </Card>
-          </Accordion>
-        </Styles>
+          <Card>
+            <Card.Header>
+              <Accordion.Toggle as={Button} eventKey="1">
+                Service Estimates
+              </Accordion.Toggle>
+            </Card.Header>
+            <Accordion.Collapse eventKey="1">
+              <Card.Body>
+                {estimatesState.services.map((element, index) => (
+                  <p>
+                    <a
+                      key={`service-estimate-${index}`}
+                      href={s3Url + element.Key}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {element.Key.toString().replace("InteriorEstimates/", "")}
+                    </a>
+                    {element.Key === "InteriorEstimates/"
+                      ? null
+                      : "\tCreated: \t" + formatDate(element.LastModified)}
+                  </p>
+                ))}
+              </Card.Body>
+            </Accordion.Collapse>
+          </Card>
+          <br />
+          <Card>
+            <Card.Header>
+              <Accordion.Toggle as={Button} eventKey="2">
+                Cabinet Estimates
+              </Accordion.Toggle>
+            </Card.Header>
+            <Accordion.Collapse eventKey="2">
+              <Card.Body>
+                {estimatesState.cabinets.map((element, index) => (
+                  <p>
+                    <a
+                      key={`cabinet-estimate-${index}`}
+                      href={s3Url + element.Key}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {element.Key.toString().replace("CabinetEstimates/", "")}
+                    </a>
+                    {element.Key === "CabinetEstimates/"
+                      ? null
+                      : "\tCreated: \t" + formatDate(element.LastModified)}
+                  </p>
+                ))}
+              </Card.Body>
+            </Accordion.Collapse>
+          </Card>
+          <br />
+          <Card>
+            <Card.Header>
+              <Accordion.Toggle as={Button} eventKey="3">
+                Invoices
+              </Accordion.Toggle>
+            </Card.Header>
+            <Accordion.Collapse eventKey="3">
+              <Card.Body>
+                {estimatesState.invoices.map((element, index) => (
+                  <p>
+                    <a
+                      key={`invoices-${index}`}
+                      href={s3Url + element.Key}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {element.Key.toString().replace("Invoices/", "")}
+                    </a>
+                    {element.Key === "Invoices/"
+                      ? null
+                      : "\tCreated: \t" + formatDate(element.LastModified)}
+                  </p>
+                ))}
+              </Card.Body>
+            </Accordion.Collapse>
+          </Card>
+        </Accordion>
+      </Styles>
     );
   }
 };

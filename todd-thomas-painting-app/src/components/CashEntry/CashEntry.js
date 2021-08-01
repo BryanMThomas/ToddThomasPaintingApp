@@ -3,7 +3,6 @@ import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import styled from "styled-components";
 import { postCash } from "../../utilities/api";
-import { getDate } from "../../utilities/util";
 
 const Styles = styled.div`
   margin-top: 2%;

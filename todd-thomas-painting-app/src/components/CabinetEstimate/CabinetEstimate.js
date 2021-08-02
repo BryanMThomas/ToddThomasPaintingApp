@@ -3,7 +3,7 @@ import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import { InteriorLineItems } from "../InteriorLineItems/InteriorLineItems";
 import styled from "styled-components";
-import { postEsimtate } from "../../utilities/api";
+import { postEsimtate, postEstimateToDB } from "../../utilities/api";
 import { getDate } from "../../utilities/util";
 
 const Styles = styled.div`
@@ -62,7 +62,7 @@ export const CabinetEstimate = () => {
       lineItems: list,
       totalPrice: total,
       otherPrice: itemsTotalFormat,
-    }));
+    })); 
   };
   const handleOpeningsChange = (e) => {
     let value = e.target.value;
@@ -114,6 +114,13 @@ export const CabinetEstimate = () => {
     };
     console.log("REQUEST BODY:" + JSON.stringify(fields));
 
+    postEstimateToDB(
+      cabinetState.clientName,
+      cabinetState.clientPhone,
+      cabinetState.clientEmail,
+      cabinetState.clientAddress,
+      "CABINET"
+    );
     postEsimtate(
       "CabinetServiceTemplateForm.pdf",
       "CabinetEstimates",

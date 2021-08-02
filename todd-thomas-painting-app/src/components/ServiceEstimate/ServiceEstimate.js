@@ -3,7 +3,7 @@ import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import { InteriorLineItems } from "../InteriorLineItems/InteriorLineItems";
 import styled from "styled-components";
-import { postEsimtate } from "../../utilities/api";
+import { postEsimtate, postEstimateToDB } from "../../utilities/api";
 import { getDate } from "../../utilities/util";
 
 const Styles = styled.div`
@@ -116,6 +116,13 @@ export const ServiceEstimate = () => {
     };
     console.log("REQUEST BODY:" + JSON.stringify(fields));
 
+    postEstimateToDB(
+      serviceState.clientName,
+      serviceState.clientPhone,
+      serviceState.clientEmail,
+      serviceState.clientAddress,
+      "SERVICE"
+    );
     postEsimtate(
       "ServiceTemplateForm.pdf",
       "InteriorEstimates",

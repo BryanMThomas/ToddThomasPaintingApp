@@ -3,7 +3,7 @@ import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import { LineItems } from "../LineItems/LineItems";
 import styled from "styled-components";
-import { postEsimtate } from "../../utilities/api";
+import { postEsimtate, postEstimateToDB } from "../../utilities/api";
 import { getDate } from "../../utilities/util";
 
 const Styles = styled.div`
@@ -19,7 +19,7 @@ const Styles = styled.div`
   }
 
   .listingsData {
-    width: 70%; 
+    width: 70%;
     max-width: 200px;
     float: left;
     display: inline-block;
@@ -31,7 +31,7 @@ export const ExteriorEstimate = () => {
   //PRICING CONSTS
   const deluxeRate = 1.17;
   const ultimateRate = 1.22;
-  const maximumRate = 1.30;
+  const maximumRate = 1.3;
   //STATE VARIABLES
   const [exteriorState, setExteriorState] = useState({
     clientName: "",
@@ -96,7 +96,20 @@ export const ExteriorEstimate = () => {
       maximumPackagePricePdf: exteriorState.maximumPackagePrice,
       notes: exteriorState.note,
     };
-    postEsimtate("ExteriorTemplateForm.pdf","ExteriorEstimates",outputFileName, fields).then((response) => {
+
+    postEstimateToDB(
+      exteriorState.clientName,
+      exteriorState.clientPhone,
+      exteriorState.clientEmail,
+      exteriorState.clientAddress,
+      "EXTERIOR"
+    );
+    postEsimtate(
+      "ExteriorTemplateForm.pdf",
+      "ExteriorEstimates",
+      outputFileName,
+      fields
+    ).then((response) => {
       if (response.status !== 200) {
         //verify succesful call
         setExteriorState((prevState) => ({
@@ -130,13 +143,13 @@ export const ExteriorEstimate = () => {
     if (exteriorState.noteTemp !== "" && name === "noteTemp") {
       note = note + "Notes:\n" + value;
     }
-    if(name === "noteTemp"){
+    if (name === "noteTemp") {
       setExteriorState((prevState) => ({
         ...prevState,
         note: note,
         noteTemp: value,
       }));
-    }else{
+    } else {
       setExteriorState((prevState) => ({
         ...prevState,
         note: note,

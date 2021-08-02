@@ -22,6 +22,30 @@ export const postEsimtate = (
   }
 };
 
+export const postEstimateToDB = (
+  clientName,
+  clientPhone,
+  clientEmail,
+  clientAddress,
+  projectType
+) => {
+  try {
+    return axios.post(
+      "https://kprt1ppwzc.execute-api.us-west-2.amazonaws.com/prod/DB",
+      {
+        clientName,
+        clientPhone,
+        clientEmail,
+        clientAddress,
+        projectType,
+      },
+      { timeout: 10000, headers: { "Content-Type": "application/json" } }
+    );
+  } catch (e) {
+    console.log("Exception: " + e);
+  }
+};
+
 export const postCash = (value) => {
   try {
     return axios.post(
@@ -38,6 +62,7 @@ export const postCash = (value) => {
 
 export const getEstimates = () => {
   return axios.get(
-    "https://kprt1ppwzc.execute-api.us-west-2.amazonaws.com/prod/estimates", { timeout: 10000, headers: { "Content-Type": "application/json" } }
+    "https://kprt1ppwzc.execute-api.us-west-2.amazonaws.com/prod/estimates",
+    { timeout: 10000, headers: { "Content-Type": "application/json" } }
   );
 };

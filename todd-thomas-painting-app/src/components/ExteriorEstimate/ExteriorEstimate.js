@@ -3,7 +3,7 @@ import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import { LineItems } from "../LineItems/LineItems";
 import styled from "styled-components";
-import { postEsimtate, postEstimateToDB } from "../../utilities/api";
+import { postEsimtate, postEstimateToDB, getCoordsFromAddress } from "../../utilities/api";
 import { getDate } from "../../utilities/util";
 
 const Styles = styled.div`
@@ -96,6 +96,10 @@ export const ExteriorEstimate = () => {
       maximumPackagePricePdf: exteriorState.maximumPackagePrice,
       notes: exteriorState.note,
     };
+    getCoordsFromAddress(exteriorState.clientAddress).then((response) => {
+      let responseBody = response.data;
+      console.log(responseBody);
+    })
 
     postEstimateToDB(
       exteriorState.clientName,

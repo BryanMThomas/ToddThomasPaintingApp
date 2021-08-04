@@ -66,3 +66,14 @@ export const getEstimates = () => {
     { timeout: 10000, headers: { "Content-Type": "application/json" } }
   );
 };
+
+export const getCoordsFromAddress = (address) => {
+  address = address.replace(" ", "+");
+  return axios.get(
+    "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+      address +
+      "&key=" +
+      process.env.REACT_APP_GOOGLE_API_KEY,
+    { timeout: 10000, headers: { "Content-Type": "application/json" } }
+  );
+};

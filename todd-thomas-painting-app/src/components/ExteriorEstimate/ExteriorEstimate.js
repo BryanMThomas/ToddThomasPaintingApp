@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import { LineItems } from "../LineItems/LineItems";
 import styled from "styled-components";
-import { postEsimtate, postEstimateToDB, getCoordsFromAddress } from "../../utilities/api";
+import {
+  postEsimtate,
+  postEstimateToDB,
+  getCoordsFromAddress,
+} from "../../utilities/api";
 import { getDate } from "../../utilities/util";
 
 const Styles = styled.div`
@@ -27,6 +31,7 @@ const Styles = styled.div`
     margin-left: 30px;
   }
 `;
+
 export const ExteriorEstimate = () => {
   //PRICING CONSTS
   const deluxeRate = 1.17;
@@ -47,6 +52,22 @@ export const ExteriorEstimate = () => {
     responseData: {},
   });
   const [lineItems, setLineItems] = useState([{ description: "", cost: "" }]);
+  const [coordsState, setCoordsState] = useState({
+    longitude: "",
+    latitude: "",
+  });
+
+  const initialRender = useRef(true);
+
+  useEffect(() => {
+    if (initialRender.current) {
+      initialRender.current = false;
+    } else {
+      createEstimate();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [coordsState]);
+
   //METHODS
   const handleSqftChange = (e) => {
     let value = e.target.value;
@@ -96,18 +117,17 @@ export const ExteriorEstimate = () => {
       maximumPackagePricePdf: exteriorState.maximumPackagePrice,
       notes: exteriorState.note,
     };
-    getCoordsFromAddress(exteriorState.clientAddress).then((response) => {
-      let responseBody = response.data;
-      console.log(responseBody);
-    })
 
     postEstimateToDB(
       exteriorState.clientName,
       exteriorState.clientPhone,
       exteriorState.clientEmail,
       exteriorState.clientAddress,
-      "EXTERIOR"
+      "EXTERIOR",
+      coordsState.longitude,
+      coordsState.latitude
     );
+
     postEsimtate(
       "ExteriorTemplateForm.pdf",
       "ExteriorEstimates",
@@ -129,10 +149,12 @@ export const ExteriorEstimate = () => {
           "https://todd-thomas-painting.s3-us-west-2.amazonaws.com/ExteriorEstimates/" +
           outputFileName +
           ".pdf";
+        console.log(JSON.stringify(coordsState));
         window.open(link);
       }
     });
   }
+
   const handleNoteChange = (e) => {
     const { name, value } = e.target;
 
@@ -164,7 +186,21 @@ export const ExteriorEstimate = () => {
   };
 
   const handleSubmit = () => {
-    createEstimate();
+    if (exteriorState.clientAddress !== "") {
+      getCoordsFromAddress(exteriorState.clientAddress).then((response) => {
+        if (response.status === 200) {
+          let results = response.data.results;
+          setCoordsState(() => ({
+            longitude: results[0].geometry.location.lng.toString(),
+            latitude: results[0].geometry.location.lat.toString(),
+          }));
+        } else {
+          console.log("ERROR");
+        }
+      });
+    } else {
+      createEstimate();
+    }
   };
 
   //DOM STRUCTURE
@@ -173,14 +209,6 @@ export const ExteriorEstimate = () => {
     <Layout>
       <Styles>
         <h1>Exterior Estimate</h1>
-        {exteriorState.responseData.hasOwnProperty("error") ? (
-          <div>
-            <h1>Error Creating Estimate</h1>
-            <p>Please screenshot page to save estimate info</p>
-          </div>
-        ) : (
-          ""
-        )}
         <br />
         <Form>
           <Form.Row>

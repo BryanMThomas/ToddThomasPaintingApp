@@ -27,7 +27,9 @@ export const postEstimateToDB = (
   clientPhone,
   clientEmail,
   clientAddress,
-  projectType
+  projectType,
+  longitude,
+  latitude
 ) => {
   try {
     return axios.post(
@@ -38,11 +40,14 @@ export const postEstimateToDB = (
         clientEmail,
         clientAddress,
         projectType,
+        longitude,
+        latitude,
       },
-      { timeout: 10000, headers: { "Content-Type": "application/json" } }
+      { timeout: 5000, headers: { "Content-Type": "application/json" } }
     );
   } catch (e) {
     console.log("Exception: " + e);
+    return null;
   }
 };
 
@@ -68,10 +73,16 @@ export const getEstimates = () => {
 };
 
 export const getCoordsFromAddress = (address) => {
-  address = address.replace(" ", "+");
+  address = address
+    .toLowerCase()
+    .replace(" ", "+")
+    .replace("az", "")
+    .replace("85086", "");
+
   return axios.get(
     "https://maps.googleapis.com/maps/api/geocode/json?address=" +
       address +
+      "+AZ+85086" +
       "&key=" +
       process.env.REACT_APP_GOOGLE_API_KEY,
     { timeout: 10000, headers: { "Content-Type": "application/json" } }

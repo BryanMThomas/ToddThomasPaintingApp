@@ -29,7 +29,7 @@ const Styles = styled.div`
 `;
 export const CabinetEstimate = () => {
   //PRICING CONSTS
-  const pricePerOpening = 100;
+  const pricePerOpening = 75;
   //STATE VARIABLES
   const [cabinetState, setCabinetState] = useState({
     clientName: "",

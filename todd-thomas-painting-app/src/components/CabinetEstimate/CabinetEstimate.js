@@ -1,13 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import { InteriorLineItems } from "../InteriorLineItems/InteriorLineItems";
 import styled from "styled-components";
-import {
-  postEsimtate,
-  postEstimateToDB,
-  getCoordsFromAddress,
-} from "../../utilities/api";
+import { postEsimtate, postEstimateToDB } from "../../utilities/api";
 import { getDate } from "../../utilities/util";
 
 const Styles = styled.div`
@@ -50,22 +46,6 @@ export const CabinetEstimate = () => {
     responseData: {},
     lineItems: [{ description: "", cost: "" }],
   });
-
-  const [coordsState, setCoordsState] = useState({
-    longitude: "",
-    latitude: "",
-  });
-
-  const initialRender = useRef(true);
-
-  useEffect(() => {
-    if (initialRender.current) {
-      initialRender.current = false;
-    } else {
-      createEstimate();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [coordsState]);
 
   //METHODS
   const setLineItems = (list) => {
@@ -140,10 +120,11 @@ export const CabinetEstimate = () => {
       cabinetState.clientPhone,
       cabinetState.clientEmail,
       cabinetState.clientAddress,
-      "CABINET",
-      coordsState.longitude,
-      coordsState.latitude
-    );
+      "CABINET"
+    ).then(response =>{
+      console.log(JSON.stringify(response));
+    });
+    
     postEsimtate(
       "CabinetServiceTemplateForm.pdf",
       "CabinetEstimates",
@@ -210,21 +191,7 @@ export const CabinetEstimate = () => {
   };
 
   const handleSubmit = () => {
-    if (cabinetState.clientAddress !== "") {
-      getCoordsFromAddress(cabinetState.clientAddress).then((response) => {
-        if (response.status === 200) {
-          let results = response.data.results;
-          setCoordsState(() => ({
-            longitude: results[0].geometry.location.lng.toString(),
-            latitude: results[0].geometry.location.lat.toString(),
-          }));
-        } else {
-          console.log("ERROR");
-        }
-      });
-    } else {
-      createEstimate();
-    }
+    createEstimate();
   };
 
   //DOM STRUCTURE

@@ -34,11 +34,6 @@ export const Home = () => {
           <h3>Past Estimates &rarr;</h3>
           <p>List of all past Estimates</p>
         </a>
-
-        <a href="/map" className={styles.card}>
-          <h3>Map &rarr;</h3>
-          <p>Map of Prev Jobs</p>
-        </a>
       </div>
     </Layout>
   );

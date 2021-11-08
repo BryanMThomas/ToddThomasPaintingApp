@@ -1,13 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import { InteriorLineItems } from "../InteriorLineItems/InteriorLineItems";
 import styled from "styled-components";
-import {
-  postEsimtate,
-  postEstimateToDB,
-  getCoordsFromAddress,
-} from "../../utilities/api";
+import { postEsimtate, postEstimateToDB } from "../../utilities/api";
 import { getDate } from "../../utilities/util";
 
 const Styles = styled.div`
@@ -45,22 +41,6 @@ export const ServiceEstimate = () => {
     responseData: {},
     lineItems: [{ description: "", cost: "" }],
   });
-
-  const [coordsState, setCoordsState] = useState({
-    longitude: "",
-    latitude: "",
-  });
-
-  const initialRender = useRef(true);
-
-  useEffect(() => {
-    if (initialRender.current) {
-      initialRender.current = false;
-    } else {
-      createEstimate();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [coordsState]);
 
   //METHODS
   const handleStateChange = (e) => {
@@ -141,10 +121,10 @@ export const ServiceEstimate = () => {
       serviceState.clientPhone,
       serviceState.clientEmail,
       serviceState.clientAddress,
-      "SERVICE",
-      coordsState.longitude,
-      coordsState.latitude
-    );
+      "SERVICE"
+    ).then(response =>{
+      console.log(JSON.stringify(response));
+    });
 
     postEsimtate(
       "ServiceTemplateForm.pdf",
@@ -172,21 +152,7 @@ export const ServiceEstimate = () => {
     });
   }
   const handleSubmit = () => {
-    if (serviceState.clientAddress !== "") {
-      getCoordsFromAddress(serviceState.clientAddress).then((response) => {
-        if (response.status === 200) {
-          let results = response.data.results;
-          setCoordsState(() => ({
-            longitude: results[0].geometry.location.lng.toString(),
-            latitude: results[0].geometry.location.lat.toString(),
-          }));
-        } else {
-          console.log("ERROR");
-        }
-      });
-    } else {
-      createEstimate();
-    }
+    createEstimate();
   };
 
   //DOM STRUCTURE

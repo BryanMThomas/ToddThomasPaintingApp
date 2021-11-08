@@ -1,13 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { Form, Button, Col } from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import { LineItems } from "../LineItems/LineItems";
 import styled from "styled-components";
-import {
-  postEsimtate,
-  postEstimateToDB,
-  getCoordsFromAddress,
-} from "../../utilities/api";
+import { postEsimtate, postEstimateToDB } from "../../utilities/api";
 import { getDate } from "../../utilities/util";
 
 const Styles = styled.div`
@@ -52,21 +48,6 @@ export const ExteriorEstimate = () => {
     responseData: {},
   });
   const [lineItems, setLineItems] = useState([{ description: "", cost: "" }]);
-  const [coordsState, setCoordsState] = useState({
-    longitude: "",
-    latitude: "",
-  });
-
-  const initialRender = useRef(true);
-
-  useEffect(() => {
-    if (initialRender.current) {
-      initialRender.current = false;
-    } else {
-      createEstimate();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [coordsState]);
 
   //METHODS
   const handleSqftChange = (e) => {
@@ -123,10 +104,10 @@ export const ExteriorEstimate = () => {
       exteriorState.clientPhone,
       exteriorState.clientEmail,
       exteriorState.clientAddress,
-      "EXTERIOR",
-      coordsState.longitude,
-      coordsState.latitude
-    );
+      "EXTERIOR"
+    ).then(response =>{
+      console.log(JSON.stringify(response));
+    });
 
     postEsimtate(
       "ExteriorTemplateForm.pdf",
@@ -149,7 +130,6 @@ export const ExteriorEstimate = () => {
           "https://todd-thomas-painting.s3-us-west-2.amazonaws.com/ExteriorEstimates/" +
           outputFileName +
           ".pdf";
-        console.log(JSON.stringify(coordsState));
         window.open(link);
       }
     });
@@ -181,26 +161,10 @@ export const ExteriorEstimate = () => {
         note: note,
       }));
     }
-
-    console.log("NOTE CHANGE: " + JSON.stringify(exteriorState));
   };
 
   const handleSubmit = () => {
-    if (exteriorState.clientAddress !== "") {
-      getCoordsFromAddress(exteriorState.clientAddress).then((response) => {
-        if (response.status === 200) {
-          let results = response.data.results;
-          setCoordsState(() => ({
-            longitude: results[0].geometry.location.lng.toString(),
-            latitude: results[0].geometry.location.lat.toString(),
-          }));
-        } else {
-          console.log("ERROR");
-        }
-      });
-    } else {
-      createEstimate();
-    }
+    createEstimate();
   };
 
   //DOM STRUCTURE

@@ -6,7 +6,6 @@ import { CabinetEstimate } from "./components/CabinetEstimate/CabinetEstimate";
 import { CashEntry } from "./components/CashEntry/CashEntry";
 import { PastEstimates } from "./components/PastEstimates/PastEstimates";
 import { Invoice } from "./components/Invoice/Invoice";
-import Map from "./components/Map/Map";
 import { Home } from "./components/Home/Home";
 import { NoMatch } from "./components/NoMatch/NoMatch";
 import { NavigationBar } from "./components/NavigationBar/NavigationBar";
@@ -25,7 +24,6 @@ function App() {
           <Route exact path="/invoice" component={Invoice} />
           <Route exact path="/cash-entry" component={CashEntry} />
           <Route exact path="/past-estimates" component={PastEstimates} />
-          <Route exact path="/map" component={Map} />
           <Route component={NoMatch} />
         </Switch>
       </Router>

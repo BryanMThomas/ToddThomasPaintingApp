@@ -27,6 +27,7 @@ const Styles = styled.div`
     margin-left: 30px;
   }
 `;
+
 export const ExteriorEstimate = () => {
   //PRICING CONSTS
   const deluxeRate = 1.17;
@@ -47,6 +48,7 @@ export const ExteriorEstimate = () => {
     responseData: {},
   });
   const [lineItems, setLineItems] = useState([{ description: "", cost: "" }]);
+
   //METHODS
   const handleSqftChange = (e) => {
     let value = e.target.value;
@@ -103,7 +105,10 @@ export const ExteriorEstimate = () => {
       exteriorState.clientEmail,
       exteriorState.clientAddress,
       "EXTERIOR"
-    );
+    ).then(response =>{
+      console.log(JSON.stringify(response));
+    });
+
     postEsimtate(
       "ExteriorTemplateForm.pdf",
       "ExteriorEstimates",
@@ -129,6 +134,7 @@ export const ExteriorEstimate = () => {
       }
     });
   }
+
   const handleNoteChange = (e) => {
     const { name, value } = e.target;
 
@@ -155,8 +161,6 @@ export const ExteriorEstimate = () => {
         note: note,
       }));
     }
-
-    console.log("NOTE CHANGE: " + JSON.stringify(exteriorState));
   };
 
   const handleSubmit = () => {
@@ -169,14 +173,6 @@ export const ExteriorEstimate = () => {
     <Layout>
       <Styles>
         <h1>Exterior Estimate</h1>
-        {exteriorState.responseData.hasOwnProperty("error") ? (
-          <div>
-            <h1>Error Creating Estimate</h1>
-            <p>Please screenshot page to save estimate info</p>
-          </div>
-        ) : (
-          ""
-        )}
         <br />
         <Form>
           <Form.Row>

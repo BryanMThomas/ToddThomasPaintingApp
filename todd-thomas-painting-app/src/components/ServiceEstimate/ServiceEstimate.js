@@ -41,8 +41,8 @@ export const ServiceEstimate = () => {
     responseData: {},
     lineItems: [{ description: "", cost: "" }],
   });
-  //METHODS
 
+  //METHODS
   const handleStateChange = (e) => {
     const { name, value } = e.target;
     setServiceState((prevState) => ({
@@ -122,7 +122,10 @@ export const ServiceEstimate = () => {
       serviceState.clientEmail,
       serviceState.clientAddress,
       "SERVICE"
-    );
+    ).then(response =>{
+      console.log(JSON.stringify(response));
+    });
+
     postEsimtate(
       "ServiceTemplateForm.pdf",
       "InteriorEstimates",
@@ -153,7 +156,6 @@ export const ServiceEstimate = () => {
   };
 
   //DOM STRUCTURE
-
   return (
     <Layout>
       <Styles>

@@ -33,3 +33,6 @@ yarn-error.log*
 
 # vercel
 .vercel
+todd-thomas-painting-app/.eslintcache
+todd-thomas-painting-app/.vscode/launch.json
+todd-thomas-painting-app/.eslintcache

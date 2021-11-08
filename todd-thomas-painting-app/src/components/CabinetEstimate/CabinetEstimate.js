@@ -46,6 +46,7 @@ export const CabinetEstimate = () => {
     responseData: {},
     lineItems: [{ description: "", cost: "" }],
   });
+
   //METHODS
   const setLineItems = (list) => {
     let itemsTotal = 0;
@@ -62,7 +63,7 @@ export const CabinetEstimate = () => {
       lineItems: list,
       totalPrice: total,
       otherPrice: itemsTotalFormat,
-    })); 
+    }));
   };
   const handleOpeningsChange = (e) => {
     let value = e.target.value;
@@ -120,7 +121,10 @@ export const CabinetEstimate = () => {
       cabinetState.clientEmail,
       cabinetState.clientAddress,
       "CABINET"
-    );
+    ).then(response =>{
+      console.log(JSON.stringify(response));
+    });
+    
     postEsimtate(
       "CabinetServiceTemplateForm.pdf",
       "CabinetEstimates",

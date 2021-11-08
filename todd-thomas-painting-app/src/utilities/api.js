@@ -37,12 +37,13 @@ export const postEstimateToDB = (
         clientPhone,
         clientEmail,
         clientAddress,
-        projectType,
+        projectType
       },
-      { timeout: 10000, headers: { "Content-Type": "application/json" } }
+      { timeout: 5000, headers: { "Content-Type": "application/json" } }
     );
   } catch (e) {
     console.log("Exception: " + e);
+    return null;
   }
 };
 
